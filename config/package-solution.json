@@ -1,0 +1,42 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "market-hub-client-side-solution",
+    "id": "e608ae5b-882b-4b33-87d6-a130b5d9de62",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.20.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "MarketHub description"
+      },
+      "longDescription": {
+        "default": "MarketHub description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "market-hub Feature",
+        "description": "The feature that activates elements of the market-hub solution.",
+        "id": "c01cfb68-33b8-45b6-a952-84d02720049d",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/market-hub.sppkg"
+  }
+
+
+}
