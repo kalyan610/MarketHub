@@ -47,8 +47,11 @@ let myitemId='';
 
 let AllDomainsFinalSavedValue='';
 let AllDomainsFinalSavedIDValue='';
+
 var AllDomainSavedValues:any=[];
 var AllDomainsSavedIDValues:any=[];
+
+
 var AllDomainsSelected:any=[];
 
 var AllSubDomains: any = [];
@@ -124,6 +127,7 @@ contentypeKey:any;
 AttachmentFiles:any;
 
 DomainSelectArray:any;
+DomainSelectedTextArray:any;
 
 SubDomainSelectedArray:any;
 
@@ -167,6 +171,7 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
      contentypeKey:"",
      AttachmentFiles:[],
      DomainSelectArray:[],
+     DomainSelectedTextArray:[],
      SubDomainSelectedArray:[]
 
 
@@ -224,20 +229,23 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
     //const stringDomainsArray = ItemInfo.DomainIDS.split(',');
 
     this.setState({DomainSelectArray:ItemInfo.DomainIDS.split(',').map(Number)});
+    this.setState({DomainSelectedTextArray:ItemInfo.Domains.split(',')});
 
     this.handleDomainsTest(this.state.DomainSelectArray);
 
       AllDomainsFinalSavedValue = ItemInfo.Domains;
       AllDomainsFinalSavedIDValue=ItemInfo.DomainIDS;
 
-        AllDomainSavedValues=ItemInfo.Domains;
-      AllDomainsSavedIDValues=ItemInfo.DomainIDS;
+        //AllDomainSavedValues=ItemInfo.Domains;
+      //AllDomainsSavedIDValues=ItemInfo.DomainIDS;
 
-      const AllDomainstingValues: string[]=AllDomainSavedValues;
-      const AllDomainIDvalues:string[]=AllDomainsSavedIDValues;
 
-      AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
-      AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
+
+      //const AllDomainstingValues: string[]=AllDomainSavedValues;
+      //const AllDomainIDvalues:string[]=AllDomainsSavedIDValues;
+
+      //AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
+      //AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
 
     this.setState({SubDomainSelectedArray:ItemInfo.SubDomainIDS.split(',').map(Number)});
 
@@ -350,7 +358,9 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
         AllDomainsSelected.push({key:item.key,text:item.text});
 
       let ItemInfo = await this._service.getSubdomainsbyID(item.key);
+      //mofy
 
+      
       AllDomainSavedValues.push(item.text);
       AllDomainsSavedIDValues.push(item.key);
 
@@ -359,10 +369,30 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
       myAraay1=this.state.DomainSelectArray;
       myAraay1.push(item.key);
 
-      this.setState({DomainSelectArray:myAraay1});
+      //this.setState({DomainSelectArray:myAraay1});
 
-      const AllDomainstingValues: string[]=AllDomainSavedValues;
-      const AllDomainIDvalues:string[]=AllDomainsSavedIDValues;
+     this.setState(prevState => ({
+  DomainSelectArray: [...prevState.DomainSelectArray]
+}));
+
+    //NEw
+
+    var myAraay2:any=[];
+
+      myAraay2=this.state.DomainSelectedTextArray;
+      myAraay2.push(item.text);
+
+      this.setState({DomainSelectedTextArray:myAraay2});
+
+
+
+    //END
+
+//integerArray.map(num => num.toString());
+
+      const AllDomainstingValues: string[]=myAraay2;
+
+      const AllDomainIDvalues:string[]=myAraay1.map((item:any) => item.toString());
 
       AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
       AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
@@ -371,12 +401,12 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
       console.log(AllDomainsFinalSavedValue);
       console.log(AllDomainsFinalSavedIDValue);
 
-
+      this.handleDomainsTest(this.state.DomainSelectArray);
   
-      for (var k in ItemInfo) {
+      // for (var k in ItemInfo) {
   
-        AllSubDomains.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
-      }
+      //   AllSubDomains.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
+      // }
 
       console.log(ItemInfo);
 
@@ -479,15 +509,11 @@ this.setState({ SubDomainItems: MyArra12 });
 
       console.log(AllSubDomainsFinalIDValue);
 
-
+//Belom Not required
       for (var k in ItemInfo) {
   
         AllSubDomains.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
 
-
-
-
-        
       }
 
       console.log(ItemInfo);
@@ -1156,6 +1182,8 @@ this.setState({ SubDomainItems: MyArra12 });
          options={this.state.DomainItems}
          onChange={this.handleDomains.bind(this)}
          
+         //onSelect={this.handleDomains.bind(this)}
+         
           multiSelect={true}>
             </ComboBox>
  <br></br>
@@ -1312,13 +1340,14 @@ this.setState({ SubDomainItems: MyArra12 });
          options={this.state.DomainItems}
          onChange={this.handleDomains.bind(this)}
          selectedKey={this.state.DomainSelectArray}
+         defaultSelectedKey={this.state.DomainSelectArray}
          //selectedKey={numberArray1}
           multiSelect={true}>
             </ComboBox>
  <br></br>
 
   
-  <b><label className={styles.labelsFonts}>Sub Domains <label className={styles.recolorss} >*</label></label></b><br></br> 
+  <b><label className={styles.labelsFonts}>Sub Domains 12 <label className={styles.recolorss} >*</label></label></b><br></br> 
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Sub Domains"
          options={this.state.SubDomainItems}
