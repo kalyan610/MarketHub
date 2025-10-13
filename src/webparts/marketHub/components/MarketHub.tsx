@@ -51,14 +51,15 @@ let AllDomainsFinalSavedIDValue='';
 var AllDomainSavedValues:any=[];
 var AllDomainsSavedIDValues:any=[];
 
+var AllSubDomainSavedIDValues:any=[];
+var AllSubDomainSavedTextValues:any=[];
 
 var AllDomainsSelected:any=[];
 
 var AllSubDomains: any = [];
 let AllSubDomainsFinalIDValue='';
 let AllSubDomainsFinalTextValues='';
-var AllSubDomainSavedIDValues:any=[];
-var AllSubDomainSavedTextValues:any=[];
+
 var AllSubDomainsSelected:any=[];
 
 var AllServiceGroups: any = [];
@@ -130,6 +131,7 @@ DomainSelectArray:any;
 DomainSelectedTextArray:any;
 
 SubDomainSelectedArray:any;
+SubDomainSelectedTextArray:any;
 
 
 }
@@ -172,7 +174,8 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
      AttachmentFiles:[],
      DomainSelectArray:[],
      DomainSelectedTextArray:[],
-     SubDomainSelectedArray:[]
+     SubDomainSelectedArray:[],
+     SubDomainSelectedTextArray:[]
 
 
     };
@@ -197,6 +200,7 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
 
       this.GetAllConeteTypes();
       this.GetAllDomains();
+      
 
     let ItemInfo = await this._service.getItemByID(myitemId);
 
@@ -248,6 +252,10 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
       //AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
 
     this.setState({SubDomainSelectedArray:ItemInfo.SubDomainIDS.split(',').map(Number)});
+    this.setState({SubDomainSelectedTextArray:ItemInfo.SubDomains.split(',')});
+
+    AllSubDomainsFinalIDValue=ItemInfo.SubDomainIDS;
+    AllSubDomainsFinalTextValues=ItemInfo.SubDomains;
 
      //numberArray1 = this.state.DomainSelectArray.map(Number);
 
@@ -494,29 +502,55 @@ this.setState({ SubDomainItems: MyArra12 });
 
       AllSubDomainsSelected.push({key: item.key, text: item.text});
 
-      let ItemInfo = await this._service.getSubdomainsbyID(item.key);
+      //let ItemInfo1 = await this._service.getSubdomainsbyID(item.key);
 
       AllSubDomainSavedIDValues.push(item.key);
-      AllSubDomainSavedTextValues.push(item.text)
+      AllSubDomainSavedTextValues.push(item.text);
 
-      const AllFinalSubDomainsIDValues: string[]=AllSubDomainSavedIDValues;
-      AllSubDomainsFinalIDValue = AllFinalSubDomainsIDValues.join(", ");
+      var MyArray2:any=[];
 
-      const AllFinalSubDomainsTextValues: string[]=AllSubDomainSavedTextValues;
-      AllSubDomainsFinalTextValues = AllFinalSubDomainsTextValues.join(", ");
+      MyArray2=this.state.SubDomainSelectedArray;
+      MyArray2.push(item.key);
 
-      console.log(AllSubDomainsFinalTextValues);
+         this.setState(prevState => ({
+  SubDomainSelectedArray: [...prevState.SubDomainSelectedArray]
+  
+}));
 
-      console.log(AllSubDomainsFinalIDValue);
+ var myAraay3:any=[];
+
+      myAraay3=this.state.SubDomainSelectedTextArray;
+      myAraay3.push(item.text);
+
+      this.setState({SubDomainSelectedTextArray:myAraay3});
+
+       const AllSubDomainstingValues: string[]=myAraay3;
+
+      const AllSubDomainIDvalues:string[]=MyArray2.map((item:any) => item.toString());
+
+      AllSubDomainsFinalTextValues = AllSubDomainstingValues.join(", ");
+      AllSubDomainsFinalIDValue=AllSubDomainIDvalues.join(",");
+
+
+
+      // const AllFinalSubDomainsIDValues: string[]=AllSubDomainSavedIDValues;
+      // AllSubDomainsFinalIDValue = AllFinalSubDomainsIDValues.join(", ");
+
+      // const AllFinalSubDomainsTextValues: string[]=AllSubDomainSavedTextValues;
+      // AllSubDomainsFinalTextValues = AllFinalSubDomainsTextValues.join(", ");
+
+      // console.log(AllSubDomainsFinalTextValues);
+
+      // console.log(AllSubDomainsFinalIDValue);
 
 //Belom Not required
-      for (var k in ItemInfo) {
+      // for (var k in ItemInfo1) {
   
-        AllSubDomains.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
+      //    AllSubDomains.push({ key: ItemInfo1[k].ID, text: ItemInfo1[k].Title});
 
-      }
+      //  }
 
-      console.log(ItemInfo);
+      // console.log(ItemInfo);
 
       }
       else
@@ -537,7 +571,7 @@ this.setState({ SubDomainItems: MyArra12 });
 
       }
 
-     this.setState({ SubDomainItems: AllSubDomains });
+     //this.setState({ SubDomainItems: AllSubDomains });
  
       
     }
@@ -1181,6 +1215,8 @@ this.setState({ SubDomainItems: MyArra12 });
          placeholder="Select  Domains"
          options={this.state.DomainItems}
          onChange={this.handleDomains.bind(this)}
+         selectedKey={this.state.DomainSelectArray}
+         defaultSelectedKey={this.state.DomainSelectArray}
          
          //onSelect={this.handleDomains.bind(this)}
          
@@ -1193,6 +1229,8 @@ this.setState({ SubDomainItems: MyArra12 });
          placeholder="Select  SubDomains"
          options={this.state.SubDomainItems}
          onChange={this.handleDomainsandSubDomains.bind(this)}
+         selectedKey={this.state.SubDomainSelectedArray}
+         defaultSelectedKey={this.state.SubDomainSelectedArray}
          
          multiSelect={true}>
     </ComboBox>
@@ -1352,7 +1390,8 @@ this.setState({ SubDomainItems: MyArra12 });
          placeholder="Select  Sub Domains"
          options={this.state.SubDomainItems}
          onChange={this.handleDomainsandSubDomains.bind(this)}
-         selectedKey={this.state.SubDomainSelectedArray}
+          selectedKey={this.state.SubDomainSelectedArray}
+         defaultSelectedKey={this.state.SubDomainSelectedArray}
          //selectedKey={numberArray1}
           multiSelect={true}>
             </ComboBox>
