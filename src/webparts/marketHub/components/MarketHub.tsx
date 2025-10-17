@@ -23,6 +23,8 @@ const dropdownStyles: Partial<IDropdownStyles> = {
 };
 
 
+const stackTokens1 = { childrenGap: 30 };
+
 const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
 
 const WiproSynergyOptions: IChoiceGroupOption[] = 
@@ -133,6 +135,21 @@ DomainSelectedTextArray:any;
 SubDomainSelectedArray:any;
 SubDomainSelectedTextArray:any;
 
+ServiceGroupsSelectedArray:any;
+ServiceGroupsSelectedTextArray:any;
+
+ServicesSelectedArray:any;
+ServicesSelectedTextArray:any;
+
+
+RegionSelectArray:any;
+RegionSelectedTextArray:any;
+
+CountriesSelectedArray:any;
+CountriesSelectedTextArray:any;
+
+CountryName:any;
+MyRegionName:any;
 
 }
 
@@ -175,7 +192,24 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
      DomainSelectArray:[],
      DomainSelectedTextArray:[],
      SubDomainSelectedArray:[],
-     SubDomainSelectedTextArray:[]
+     SubDomainSelectedTextArray:[],
+
+     ServiceGroupsSelectedArray:[],
+     ServiceGroupsSelectedTextArray:[],
+
+     ServicesSelectedArray:[],
+    ServicesSelectedTextArray:[],
+
+    RegionSelectArray:[],
+    RegionSelectedTextArray:[],
+
+    CountriesSelectedArray:[],
+CountriesSelectedTextArray:[],
+
+CountryName:"",
+MyRegionName:""
+
+
 
 
     };
@@ -193,13 +227,19 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
 
     myitemId = this.getParam('SID');
 
+    console.log(AllSubDomainsFinalIDValue);
+    console.log(AllCountryFinalSavedValue);
+    console.log(AllCountryFinalSavedIDValue);
+    console.log(AllSubDomainsFinalTextValues);
     
+
 
      if(myitemId!="")
      {
 
       this.GetAllConeteTypes();
       this.GetAllDomains();
+      this.GetAllServiceGroups();
       
 
     let ItemInfo = await this._service.getItemByID(myitemId);
@@ -211,6 +251,7 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
     this.setState({ContactId:ItemInfo.ContactPerson.EMail})
     this.setState({desc:ItemInfo.Description})
     this.setState({keywords:ItemInfo.Keywords})
+
     
      if(ItemInfo.WiproSynergy=="No")
      {
@@ -226,38 +267,44 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
          this.setState({WiproSynergyKey:"Yes"})
       }
      
-
-      //Domains
-
-
-    //const stringDomainsArray = ItemInfo.DomainIDS.split(',');
+   
 
     this.setState({DomainSelectArray:ItemInfo.DomainIDS.split(',').map(Number)});
     this.setState({DomainSelectedTextArray:ItemInfo.Domains.split(',')});
-
     this.handleDomainsTest(this.state.DomainSelectArray);
-
       AllDomainsFinalSavedValue = ItemInfo.Domains;
       AllDomainsFinalSavedIDValue=ItemInfo.DomainIDS;
 
-        //AllDomainSavedValues=ItemInfo.Domains;
-      //AllDomainsSavedIDValues=ItemInfo.DomainIDS;
 
 
-
-      //const AllDomainstingValues: string[]=AllDomainSavedValues;
-      //const AllDomainIDvalues:string[]=AllDomainsSavedIDValues;
-
-      //AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
-      //AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
+      this.setState({ServiceGroupsSelectedArray:ItemInfo.ServiceGroupIDS.split(',').map(Number)});
+    this.setState({ServiceGroupsSelectedTextArray:ItemInfo.ServiceGroups.split(',')});
+    this.handleServicesTest(this.state.ServiceGroupsSelectedArray);
+    AllServiceGroupsFinalSavedValue=ItemInfo.ServiceGroups;
+    AllServiceGroupsFinalSavedIDValue=ItemInfo.ServiceGroupIDS;
 
     this.setState({SubDomainSelectedArray:ItemInfo.SubDomainIDS.split(',').map(Number)});
     this.setState({SubDomainSelectedTextArray:ItemInfo.SubDomains.split(',')});
-
-    AllSubDomainsFinalIDValue=ItemInfo.SubDomainIDS;
+     AllSubDomainsFinalIDValue=ItemInfo.SubDomainIDS;
     AllSubDomainsFinalTextValues=ItemInfo.SubDomains;
 
-     //numberArray1 = this.state.DomainSelectArray.map(Number);
+   
+      this.setState({ServicesSelectedArray:ItemInfo.ServicesIDS.split(',').map(Number)});
+    this.setState({ServicesSelectedTextArray:ItemInfo.Services.split(',')});
+     AllServiceFinalSavedValue=ItemInfo.Services;
+    //AllServiceGroupsFinalSavedValue=ItemInfo.Services;
+    AllServiceFinalSavedIDValue=ItemInfo.ServicesIDS;
+
+    //Country & Region
+
+    this.setState({CountryName:ItemInfo.Countries});
+    
+   let ItemInfo1 = await this._service.getRegionbyTitle(this.state.CountryName);
+   let ItemInfo2 = await this._service.getRegionName(ItemInfo1.RegionId);
+
+   this.setState({MyRegionName:ItemInfo2.Title});
+
+   console.log(ItemInfo1);
 
 
   this.setState({AttachmentFiles:ItemInfo.AttachmentFiles})
@@ -267,6 +314,9 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
     let mainstr=strdoj[0].replace("-","/");
     let strToDate = new Date(mainstr);
     this.setState({dtLastReview:strToDate})
+
+
+      this.setState({contentypeKey:ItemInfo.ReqcontenttypeID})
      
      }
 
@@ -458,21 +508,6 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
          for(var count=0;count<myItems.length;count++)
          {
 
-//   const newArray13 = MyAllDomainNames.filter((item:any) =>{return item.key === myItems[count]});
-
-
-
-//   for (var k in newArray13) {
-
-//  AllDomainSavedValues.push(newArray13[k].Title);
-// AllDomainsSavedIDValues.push(newArray13[k].Id);
-// }
-
-//       const AllDomainstingValues: string[]=AllDomainSavedValues;
-//       const AllDomainIDvalues:string[]=AllDomainsSavedIDValues;
- 
-//       AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
-//       AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
 
 let ItemInfo12 = await this._service.getSubdomainsbyID(myItems[count]);
 
@@ -607,31 +642,41 @@ this.setState({ SubDomainItems: MyArra12 });
        if(item.selected==true)
       {
 
-      let ItemInfo = await this._service.getServicesID(item.key);
+      //let ItemInfo = await this._service.getServicesID(item.key);
 
       AllServiceGroupsSelected.push({key:item.key,text:item.text});
-
 
       AllServiceGroupsSavedValues.push(item.text);
       AllServiceGroupsSavedIDValues.push(item.key);
 
-      const AllServiceGroupsstingValues: string[]=AllServiceGroupsSavedValues;
-      const AllServiceGroupsIDvalues:string[]=AllServiceGroupsSavedIDValues;
+
+       var myAraay1:any=[];
+
+      myAraay1=this.state.ServiceGroupsSelectedArray;
+      myAraay1.push(item.key);
+
+         this.setState(prevState => ({
+  ServiceGroupsSelectedArray: [...prevState.ServiceGroupsSelectedArray]
+}));
+
+    var myAraay2:any=[];
+
+      myAraay2=this.state.ServiceGroupsSelectedTextArray;
+      myAraay2.push(item.text);
+
+      this.setState({ServiceGroupsSelectedTextArray:myAraay2});
+
+
+      const AllServiceGroupsstingValues: string[]=myAraay2;
+      const AllServiceGroupsIDvalues:string[]=myAraay1.map((item:any) => item.toString());;
 
       AllServiceGroupsFinalSavedValue = AllServiceGroupsstingValues.join(", ");
-      console.log(AllServiceGroupsFinalSavedValue);
       AllServiceGroupsFinalSavedIDValue=AllServiceGroupsIDvalues.join(",");
 
+      console.log(AllServiceGroupsFinalSavedValue);
+      console.log(AllServiceGroupsFinalSavedIDValue);
 
-
-
-
-      for (var k in ItemInfo) {
-  
-        AllServices.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
-      }
-
-      console.log(ItemInfo);
+      this.handleServicesTest(this.state.ServiceGroupsSelectedArray);
 
       }
       else
@@ -657,6 +702,40 @@ this.setState({ SubDomainItems: MyArra12 });
       
     }
 
+      private async handleServicesTest(myItems:[])
+    {
+
+
+      if(myItems.length>0)
+      {
+
+
+
+        var MyArra12:any=[];
+        
+//         var MyAllDomainNames:any[]=this.state.DomainItems;
+
+         for(var count=0;count<myItems.length;count++)
+         {
+
+let ItemInfo12 = await this._service.getServicesID(myItems[count]);
+
+for (var k in ItemInfo12) {
+MyArra12.push({key: ItemInfo12[k].Id, text: ItemInfo12[k].Title});
+}
+}
+
+this.setState({ ServicesItems: MyArra12 });
+   
+
+      }
+  
+
+     
+ 
+
+    }
+
    
     private async handleServiceGroupsandServices(event: React.FormEvent<HTMLDivElement>, item: IComboBoxOption): Promise<any>  {
 
@@ -665,29 +744,42 @@ this.setState({ SubDomainItems: MyArra12 });
        if(item.selected==true)
       {
 
-      let ItemInfo = await this._service.getServicesID(item.key);
+      
 
       AllServicesSelected.push({key: item.key, text: item.text});
 
       AllServicesSavedIDValues.push(item.key);
       AllServicesSavedTextValues.push(item.text);
 
-      const AllFinalServicesIDValues: string[]=AllServicesSavedIDValues;
-       AllServiceFinalSavedIDValue= AllFinalServicesIDValues.join(", ");
+          var MyArray2:any=[];
 
-     const AllFinalServicestextValues:string[]=AllServicesSavedTextValues;
-     AllServiceFinalSavedValue=AllFinalServicestextValues.join(",");
+      MyArray2=this.state.ServicesSelectedArray;
+      MyArray2.push(item.key);
+
+         this.setState(prevState => ({
+  ServicesSelectedArray: [...prevState.ServicesSelectedArray]
+  
+}));
+
+
+       var myAraay3:any=[];
+
+      myAraay3=this.state.ServicesSelectedTextArray;
+      myAraay3.push(item.text);
+
+      this.setState({ServicesSelectedTextArray:myAraay3});
+
+
+
+      const AllServicesstringValues: string[]=myAraay3;
+
+      const  AllServicesServicesIDValue:string[]=MyArray2.map((item:any) => item.toString());
+
+      AllServiceFinalSavedValue=AllServicesstringValues.join(",");
+      AllServiceFinalSavedIDValue=AllServicesServicesIDValue.join(",");
 
       console.log(AllServiceFinalSavedValue);
 
-
-
-      for (var k in ItemInfo) {
-  
-        AllServices.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
-      }
-
-      console.log(ItemInfo);
 
       }
       else
@@ -708,7 +800,7 @@ this.setState({ SubDomainItems: MyArra12 });
 
       }
 
-     this.setState({ ServicesItems: AllServices });
+     //this.setState({ ServicesItems: AllServices });
  
       
     }
@@ -751,8 +843,26 @@ this.setState({ SubDomainItems: MyArra12 });
       AllRegionSavedValues.push(item.text);
       AllRegionsSavedIDValues.push(item.key);
 
-      const AllRegionstingValues: string[]=AllRegionSavedValues;
-      const AllRegionIDvalues:string[]=AllRegionsSavedIDValues;
+      
+      var myAraay1:any=[];
+
+      myAraay1=this.state.RegionSelectArray;
+      myAraay1.push(item.key);
+
+          this.setState(prevState => ({
+  RegionSelectArray: [...prevState.RegionSelectArray]
+}));
+
+var myAraay2:any=[];
+
+      myAraay2=this.state.RegionSelectedTextArray;
+      myAraay2.push(item.text);
+
+      this.setState({RegionSelectedTextArray:myAraay2});
+//END
+
+      const AllRegionstingValues: string[]=myAraay2;
+      const AllRegionIDvalues:string[]=myAraay1.map((item:any) => item.toString());
 
       AllRegionsFinalSavedValue = AllRegionstingValues.join(", ");
       AllRegionsFinalSavedIDValue=AllRegionIDvalues.join(",");
@@ -761,11 +871,8 @@ this.setState({ SubDomainItems: MyArra12 });
       console.log(AllRegionsFinalSavedValue);
       console.log(AllRegionsFinalSavedIDValue);
 
-
-      for (var k in ItemInfo) {
-  
-        AllCountries.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
-      }
+this.handleRegionsTest(this.state.RegionSelectArray);
+   
 
       console.log(ItemInfo);
 
@@ -788,9 +895,43 @@ this.setState({ SubDomainItems: MyArra12 });
 
       }
 
-     this.setState({ CountryItems: AllCountries });
+     //this.setState({ CountryItems: AllCountries });
  
       
+    }
+
+
+    
+     private async handleRegionsTest(myItems:[])
+    {
+
+
+      if(myItems.length>0)
+      {
+
+        var MyArra12:any=[];
+        
+
+         for(var count=0;count<myItems.length;count++)
+         {
+
+
+let ItemInfo12 = await this._service.getCountryID(myItems[count]);
+
+for (var k in ItemInfo12) {
+MyArra12.push({key: ItemInfo12[k].Id, text: ItemInfo12[k].Title});
+}
+}
+
+this.setState({ CountryItems: MyArra12 });
+   
+
+      }
+  
+
+     
+ 
+
     }
     
 
@@ -803,29 +944,35 @@ this.setState({ SubDomainItems: MyArra12 });
 
       AllCountriesSelected.push({ key: item.key, text: item.text});
 
-      let ItemInfo = await this._service.getCountryID(item.key);
-
       
       AllCountrySavedValues.push(item.text);
       AllCountrySavedIDValues.push(item.key);
 
-      const AllCountrystingValues: string[]=AllCountrySavedValues;
-      const AllCountryIDvalues:string[]=AllCountrySavedIDValues;
+         var MyArray2:any=[];
 
-      AllCountryFinalSavedValue = AllCountrystingValues.join(", ");
-      AllCountryFinalSavedIDValue=AllCountryIDvalues.join(",");
+      MyArray2=this.state.CountriesSelectedArray;
+      MyArray2.push(item.key);
 
-
-      console.log(AllCountryFinalSavedValue);
-      console.log(AllCountryFinalSavedIDValue);
-
-
-      for (var k in ItemInfo) {
+         this.setState(prevState => ({
+  CountriesSelectedArray: [...prevState.CountriesSelectedArray]
   
-        AllCountries.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
-      }
+}));
 
-      console.log(ItemInfo);
+
+      var myAraay3:any=[];
+
+      myAraay3=this.state.CountriesSelectedTextArray;
+      myAraay3.push(item.text);
+
+      this.setState({CountriesSelectedTextArray:myAraay3});
+
+       const AllCountriesinstingValues: string[]=myAraay3;
+
+      const AllCountriesIDvalues:string[]=MyArray2.map((item:any) => item.toString());
+
+      AllCountryFinalSavedValue = AllCountriesinstingValues.join(", ");
+      AllCountryFinalSavedIDValue=AllCountriesIDvalues.join(",");
+    
 
       }
       else
@@ -846,7 +993,7 @@ this.setState({ SubDomainItems: MyArra12 });
 
       }
 
-     this.setState({ CountryItems: AllCountries });
+     //this.setState({ CountryItems: AllCountries });
  
       
     }
@@ -1123,19 +1270,15 @@ this.setState({ SubDomainItems: MyArra12 });
           AllDomainsFinalSavedIDValue,
           AllSubDomainsFinalTextValues,
           AllSubDomainsFinalIDValue,
-
-          AllServiceGroupsFinalSavedValue,
-          AllServiceGroupsFinalSavedIDValue,
+         AllServiceGroupsFinalSavedValue,
+        AllServiceGroupsFinalSavedIDValue,
           AllServiceFinalSavedValue,
           AllServiceFinalSavedIDValue,
-
           AllRegionsFinalSavedValue,
           AllRegionsFinalSavedIDValue,
-
-          AllCountries[count].key,
-          AllCountries[count].text,
-          // AllCountryFinalSavedValue,
-          // AllCountryFinalSavedIDValue,
+          AllCountriesSelected[count].key,
+          AllCountriesSelected[count].text,
+          
           this.state.Clientname,
           (this.state.ContactId == null ? 0:this.state.ContactId.Id),
           this.state.WiproSynergy,
@@ -1165,8 +1308,90 @@ this.setState({ SubDomainItems: MyArra12 });
 
     }
      
+   private onApproveClick():void{
 
+    let month1= (this.state.dtLastReview.getMonth()+1);
 
+    let year1 =(this.state.dtLastReview.getFullYear());
+
+    let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+   
+      this._service.Approve(
+
+        myitemId,
+        this.state.Name,
+        ContentType,
+        AllDomainsFinalSavedValue,
+        AllDomainsFinalSavedIDValue,
+        AllSubDomainsFinalTextValues,
+        AllSubDomainsFinalIDValue,
+        AllServiceGroupsFinalSavedValue,
+        AllServiceGroupsFinalSavedIDValue,
+        AllServiceFinalSavedValue,
+        AllServiceFinalSavedIDValue,
+        FinalLastReviewDate1,
+        (this.state.ContactId == null ? 0:this.state.ContactId.Id),
+        this.state.WiproSynergy,
+        this.state.desc,
+        this.state.keywords,
+        this.state.contentypeKey
+      
+      ).then(function (data:any)
+        {
+      
+          alert('Record updated successfully');
+      
+         
+      
+        });
+      
+        
+
+   }
+
+   
+   private onRejectClick():void{
+
+    let month1= (this.state.dtLastReview.getMonth()+1);
+
+    let year1 =(this.state.dtLastReview.getFullYear());
+
+    let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+   
+      this._service.Reject(
+
+        myitemId,
+        this.state.Name,
+        ContentType,
+        AllDomainsFinalSavedValue,
+        AllDomainsFinalSavedIDValue,
+        AllSubDomainsFinalTextValues,
+        AllSubDomainsFinalIDValue,
+        AllServiceGroupsFinalSavedValue,
+        AllServiceGroupsFinalSavedIDValue,
+        AllServiceFinalSavedValue,
+        AllServiceFinalSavedIDValue,
+        FinalLastReviewDate1,
+        (this.state.ContactId == null ? 0:this.state.ContactId.Id),
+        this.state.WiproSynergy,
+        this.state.desc,
+        this.state.keywords,
+        this.state.contentypeKey
+      
+      ).then(function (data:any)
+        {
+      
+          alert('Record updated successfully');
+      
+         
+      
+        });
+      
+        
+
+   }
+
+   
   public render(): React.ReactElement<IMarketHubProps> {
     
     return (
@@ -1237,20 +1462,26 @@ this.setState({ SubDomainItems: MyArra12 });
 
 <br></br>
     
-  <b><label className={styles.labelsFonts}>Service Groups <label className={styles.recolorss} >*</label></label></b><br></br> 
+  <b><label className={styles.labelsFonts}>Service Groups1 <label className={styles.recolorss} >*</label></label></b><br></br> 
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Serivce Groups"
          options={this.state.ServiceGroupItems}
          onChange={this.handleServiceGroups.bind(this)}
+           selectedKey={this.state.ServiceGroupsSelectedArray}
+         defaultSelectedKey={this.state.ServiceGroupsSelectedArray}
+         
           multiSelect={true}>
             </ComboBox>
  <br></br>
 
- <b><label className={styles.labelsFonts}>Services <label className={styles.recolorss} >*</label></label></b><br></br> 
+ <b><label className={styles.labelsFonts}>Services 1 <label className={styles.recolorss} >*</label></label></b><br></br> 
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Services"
          options={this.state.ServicesItems}
          onChange={this.handleServiceGroupsandServices.bind(this)}
+           selectedKey={this.state.ServicesSelectedArray}
+         defaultSelectedKey={this.state.ServicesSelectedArray}
+         
          multiSelect={true}>
     </ComboBox>
     <br></br>
@@ -1262,6 +1493,8 @@ this.setState({ SubDomainItems: MyArra12 });
          placeholder="Select  Regions"
          options={this.state.RegionItems}
          onChange={this.handleRegions.bind(this)}
+          selectedKey={this.state.RegionSelectArray}
+         defaultSelectedKey={this.state.RegionSelectArray}
           multiSelect={true}>
             </ComboBox>
  <br></br>
@@ -1271,6 +1504,8 @@ this.setState({ SubDomainItems: MyArra12 });
          placeholder="Select  Countries"
          options={this.state.CountryItems}
          onChange={this.handleRegionCountries.bind(this)}
+          selectedKey={this.state.CountriesSelectedArray}
+         defaultSelectedKey={this.state.CountriesSelectedArray}
          multiSelect={true}>
     </ComboBox>
     <br></br>
@@ -1353,7 +1588,7 @@ this.setState({ SubDomainItems: MyArra12 });
 <div className={styles.Divsection}> 
 <b><label className={styles.labelsFonts}>Attachment<label className={styles.recolorss}>*</label></label></b><br/><br/>
 
-<input id="infringementFiles" type="file"  name="files[]"  onChange={this.changeFileuploadRecived.bind(this)}/>
+{/* <input id="infringementFiles" type="file"  name="files[]"  onChange={this.changeFileuploadRecived.bind(this)} disabled={true}/> */}
 
 {this.state.AttachmentFiles.length>0 && this.state.AttachmentFiles.map((item:any,index:any) =>( 
     <div><a href={item.ServerRelativeUrl} target="_blank">{item.FileName} </a></div>
@@ -1397,14 +1632,35 @@ this.setState({ SubDomainItems: MyArra12 });
             </ComboBox>
  <br></br>
    
-   <b><label className={styles.labelsFonts}>Service Groups <label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>Service Groups 12 <label className={styles.recolorss} >*</label></label></b><br></br> 
+    <ComboBox  styles={comboBoxStyles}
+         placeholder="Select  Service Groups"
+         options={this.state.ServiceGroupItems}
+         onChange={this.handleServiceGroups.bind(this)}
+          selectedKey={this.state.ServiceGroupsSelectedArray}
+         defaultSelectedKey={this.state.ServiceGroupsSelectedArray}
+         //selectedKey={numberArray1}
+          multiSelect={true}>
+            </ComboBox>
+            <br></br>
 
-   <b><label className={styles.labelsFonts}>Services <label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>Services 12 <label className={styles.recolorss} >*</label></label></b><br></br> 
+    <ComboBox  styles={comboBoxStyles}
+         placeholder="Select  Services"
+         options={this.state.ServicesItems}
+         onChange={this.handleServiceGroupsandServices.bind(this)}
+          selectedKey={this.state.ServicesSelectedArray}
+         defaultSelectedKey={this.state.ServicesSelectedArray}
+         //selectedKey={numberArray1}
+          multiSelect={true}>
+            </ComboBox>
+            <br></br>
 
-   <b><label className={styles.labelsFonts}>Regions <label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>Region<label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>{this.state.MyRegionName}</label></b><br></br> 
 
-   <b><label className={styles.labelsFonts}>Countries <label className={styles.recolorss} >*</label></label></b><br></br> 
-
+   <b><label className={styles.labelsFonts}>Country <label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>{this.state.CountryName}</label></b><br></br> 
    
 <b><label className={styles.labelsFonts}>Client <label className={styles.recolorss}>*</label></label></b><br/>  
 <input type="text" name="txtClient" value={this.state.Clientname} onChange={this.changeClientName.bind(this)} className={styles.links}/><br></br>
@@ -1467,10 +1723,18 @@ this.setState({ SubDomainItems: MyArra12 });
     </div></div>
 <br></br>
 
+<Stack horizontal tokens={stackTokens1}>
+
+<PrimaryButton text="Approve" onClick={this.onApproveClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} /><br></br>
+<PrimaryButton text="Reject" onClick={this.onRejectClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} /><br></br>
+
+
+        </Stack>
         </Stack>
 
 
        }
+       
       </Stack>
      
     );

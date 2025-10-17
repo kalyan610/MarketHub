@@ -104,7 +104,11 @@ export default class Service {
     public Test()
     {
 
-        console.log(this.Save("","","2","","","","","","","","","",2,"","","","","","","",2,""));
+        //console.log(this.Save("","","2","","","","","","","","","",2,"","","","","","","",2,""));
+    console.log(this.Save("","","","","","","","","","","","","","","","","","","","",2,""));
+     console.log(this.Approve(2,"","","","","","","","","","","","","","","",2));
+      console.log(this.Reject(2,"","","","","","","","","","","","","","","",2));
+
     }
 
 
@@ -148,7 +152,7 @@ export default class Service {
         MyServiceIDS:string,
         MyRegions:string,
         MyRegionIDS:string,
-        MyCountryID:number,
+        MyCountryID:string,
         MyCountries:String,
         
         MyClientname:string,
@@ -167,9 +171,6 @@ export default class Service {
         {
 
 
-           
-
-         
           let file=acceptedFiles;
     
           let Varmyval= await sp.web.lists.getByTitle("MarketHub").items.add({
@@ -242,7 +243,180 @@ const Item: any[] = await sp.web.lists.getByTitle(selectedList).items.select("*,
 }
 
 
+public async getRegionbyTitle(MyTitle:any):Promise<any> {
 
+ try {
+
+const selectedList = 'Country';
+const Item: any[] = await sp.web.lists.getByTitle(selectedList).items.select("*,Title").filter("Title eq '" + MyTitle + "'").get();
+        return Item[0];
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+public async getRegionName(ItemID:any):Promise<any> {
+
+ try {
+
+const selectedList = 'Regions';
+const Item: any[] = await sp.web.lists.getByTitle(selectedList).items.select("*,Title").filter("ID eq '" + ItemID + "'").get();
+        return Item[0];
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+private async Approve(
+    
+        MyRecordId:number,
+        YourName:string,
+        MyContentType:string,
+
+        MyDomainsText:string,
+        MyDomainIDS:string,
+        MySubDomainsText:string,
+        MySubDomainIDS:string,
+        MyServiceGroups:string,
+        MyServiceGroupIDs:string,
+        MyServices:string,
+        MyServiceIDS:string,
+        MyLastReviewDate:string,
+        MyContactName:string,
+        MyWiproSynergy:string,
+        MyDescription:string,
+        MyKeywords:string,
+        MyContentTypeKey:Number,
+        
+)
+    {
+
+       let MyListTitle='MarketHub';
+
+        try
+        {
+    
+        let list = sp.web.lists.getByTitle(MyListTitle);
+        let Varmyval = await list.items.getById(MyRecordId).update({
+
+        //Emp Update
+        
+            Name:YourName,
+            ContentTypes:MyContentType,
+
+            Domains:MyDomainsText,
+            DomainIDS:MyDomainIDS,
+
+            SubDomains:MySubDomainsText,
+            SubDomainIDS:MySubDomainIDS,
+
+            ServiceGroups:MyServiceGroups,
+            ServiceGroupIDS:MyServiceGroupIDs,
+
+            Services:MyServices,
+            ServicesIDS:MyServiceIDS,
+            LastReview:MyLastReviewDate,
+            ContactPersonId:MyContactName,
+
+            WiproSynergy:MyWiproSynergy,
+            Description:MyDescription,
+            Keywords:MyKeywords,
+
+            ReqcontenttypeID:MyContentTypeKey,
+            Title:"Record Approved",
+            Status:"Approved"
+        
+    }).then (async r => {
+
+        });
+
+        return Varmyval;
+
+        }
+
+    
+      catch (error) {
+        console.log(error);
+      }
+      
+
+    }
+
+private async Reject(
+    
+        MyRecordId:number,
+        YourName:string,
+        MyContentType:string,
+
+        MyDomainsText:string,
+        MyDomainIDS:string,
+        MySubDomainsText:string,
+        MySubDomainIDS:string,
+        MyServiceGroups:string,
+        MyServiceGroupIDs:string,
+        MyServices:string,
+        MyServiceIDS:string,
+        MyLastReviewDate:string,
+        MyContactName:string,
+        MyWiproSynergy:string,
+        MyDescription:string,
+        MyKeywords:string,
+        MyContentTypeKey:Number,
+        
+)
+    {
+
+       let MyListTitle='MarketHub';
+
+        try
+        {
+    
+        let list = sp.web.lists.getByTitle(MyListTitle);
+        let Varmyval = await list.items.getById(MyRecordId).update({
+
+        //Emp Update
+        
+            Name:YourName,
+            ContentTypes:MyContentType,
+
+            Domains:MyDomainsText,
+            DomainIDS:MyDomainIDS,
+
+            SubDomains:MySubDomainsText,
+            SubDomainIDS:MySubDomainIDS,
+
+            ServiceGroups:MyServiceGroups,
+            ServiceGroupIDS:MyServiceGroupIDs,
+
+            Services:MyServices,
+            ServicesIDS:MyServiceIDS,
+            LastReview:MyLastReviewDate,
+            ContactPersonId:MyContactName,
+
+            WiproSynergy:MyWiproSynergy,
+            Description:MyDescription,
+            Keywords:MyKeywords,
+
+            ReqcontenttypeID:MyContentTypeKey,
+            Title:"Record Rejected",
+            Status:"Rejected"
+        
+    }).then (async r => {
+
+        });
+
+        return Varmyval;
+
+        }
+
+    
+      catch (error) {
+        console.log(error);
+      }
+      
+
+    }
 
 
 }
