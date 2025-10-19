@@ -33,6 +33,8 @@ const WiproSynergyOptions: IChoiceGroupOption[] =
   { key: "No", text: "No" }];  
 
 
+  let updatedDomainTextsString='';
+
 //var DomainSelectArray:any=[];
 
 //var MyTestArray=["1","2","3"];
@@ -50,6 +52,8 @@ let myitemId='';
 let AllDomainsFinalSavedValue='';
 let AllDomainsFinalSavedIDValue='';
 
+
+
 var AllDomainSavedValues:any=[];
 var AllDomainsSavedIDValues:any=[];
 
@@ -60,6 +64,7 @@ var AllDomainsSelected:any=[];
 
 var AllSubDomains: any = [];
 let AllSubDomainsFinalIDValue='';
+
 let AllSubDomainsFinalTextValues='';
 
 var AllSubDomainsSelected:any=[];
@@ -150,6 +155,11 @@ CountriesSelectedTextArray:any;
 
 CountryName:any;
 MyRegionName:any;
+UpdateDomainIdString:any;
+UpdateSubDomainIdString:any;
+UpdatedServicesIdString:any;
+SubDomainsFinalStringValue:any;
+ServicesFinalStringValue:any;
 
 }
 
@@ -207,7 +217,12 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
 CountriesSelectedTextArray:[],
 
 CountryName:"",
-MyRegionName:""
+MyRegionName:"",
+UpdateDomainIdString:"",
+UpdateSubDomainIdString:"",
+UpdatedServicesIdString:"",
+SubDomainsFinalStringValue:"",
+ServicesFinalStringValue:""
 
 
 
@@ -452,8 +467,9 @@ MyRegionName:""
 
       const AllDomainIDvalues:string[]=myAraay1.map((item:any) => item.toString());
 
-      AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
-      AllDomainsFinalSavedIDValue=AllDomainIDvalues.join(",");
+      //AllDomainsFinalSavedValue = AllDomainstingValues.join(", ");
+      AllDomainsFinalSavedValue = AllDomainstingValues.map(text => text.trim()).join(",");
+      AllDomainsFinalSavedIDValue=AllDomainIDvalues.map(text => text.trim()).join(",");
 
 
       console.log(AllDomainsFinalSavedValue);
@@ -461,33 +477,54 @@ MyRegionName:""
 
       this.handleDomainsTest(this.state.DomainSelectArray);
   
-      // for (var k in ItemInfo) {
-  
-      //   AllSubDomains.push({ key: ItemInfo[k].ID, text: ItemInfo[k].Title});
-      // }
+       console.log(ItemInfo);
 
-      console.log(ItemInfo);
+      this.setState({ SubDomainItems: AllSubDomains });
+
+      
+
+ 
 
       }
       else
       {
 
+    const subDomainsToRemove = await this._service.getSubdomainsbyID(item.key);
+    const subDomainIdsToRemove = subDomainsToRemove.map((sd: any) => sd.ID);
+    const updatedDomainIds = this.state.DomainSelectArray.filter((id: any) => id !== item.key);
+    const updatedDomainIdsString: string = updatedDomainIds.join(",");
+   const updatedDomainTexts = this.state.DomainSelectedTextArray.filter((text: any) => text !== item.text);
+   const updatedDomainTextsString: string = updatedDomainTexts.join(",");
 
-        let ItemInfo1 = await this._service.getSubdomainsbyID(item.key);
-      
+    // const updatedDomainIdsString: string = updatedDomainIds.map((id:any) => id.toString()).join(",");
+    // updatedDomainTextsString = updatedDomainTexts.join(",");
 
-      for (var k in ItemInfo1) {
-
-        const newArray = AllSubDomains.filter((item:any) =>{return item.key !== ItemInfo1[k].ID});
-
+    // this.setState({UpdateDomainIdString:updatedDomainIdsString})
   
-        AllSubDomains=newArray;
+
+    const updatedSubDomainItems = this.state.SubDomainItems.filter((sd: any) => !subDomainIdsToRemove.includes(sd.key));
+    const updatedSubDomainSelectedArray = this.state.SubDomainSelectedArray.filter((sdKey:any) => !subDomainIdsToRemove.includes(sdKey));
+    const updatedSubDomainSelectedTextArray = this.state.SubDomainSelectedTextArray.filter((sdText:any) =>
+      !subDomainsToRemove.some((sd: any) => sd.Title === sdText)
+    );
+
+    this.setState({
+      DomainSelectArray: updatedDomainIds,
+      DomainSelectedTextArray: updatedDomainTexts,
+      SubDomainItems: updatedSubDomainItems,
+      SubDomainSelectedArray: updatedSubDomainSelectedArray,
+      SubDomainSelectedTextArray: updatedSubDomainSelectedTextArray
+      //SubDomainSelectedArray: [], // clear subdomain selection
+    });
+
+    //AllDomainsFinalSavedIDValue=updatedDomainIdsString.map(text => text.trim()).join(",");
+
+        AllDomainsFinalSavedIDValue = updatedDomainIdsString;
+        AllDomainsFinalSavedValue = updatedDomainTextsString;
+
       }
 
-
-      }
-
-     this.setState({ SubDomainItems: AllSubDomains });
+     //this.setState({ SubDomainItems: AllSubDomains });
  
 
     }
@@ -563,52 +600,51 @@ this.setState({ SubDomainItems: MyArra12 });
 
       const AllSubDomainIDvalues:string[]=MyArray2.map((item:any) => item.toString());
 
-      AllSubDomainsFinalTextValues = AllSubDomainstingValues.join(", ");
-      AllSubDomainsFinalIDValue=AllSubDomainIDvalues.join(",");
+      AllSubDomainsFinalTextValues = AllSubDomainstingValues.map(text => text.trim()).join(",")
+      AllSubDomainsFinalIDValue=AllSubDomainIDvalues.map(text => text.trim()).join(",")
 
 
-
-      // const AllFinalSubDomainsIDValues: string[]=AllSubDomainSavedIDValues;
-      // AllSubDomainsFinalIDValue = AllFinalSubDomainsIDValues.join(", ");
-
-      // const AllFinalSubDomainsTextValues: string[]=AllSubDomainSavedTextValues;
-      // AllSubDomainsFinalTextValues = AllFinalSubDomainsTextValues.join(", ");
-
-      // console.log(AllSubDomainsFinalTextValues);
-
-      // console.log(AllSubDomainsFinalIDValue);
-
-//Belom Not required
-      // for (var k in ItemInfo1) {
-  
-      //    AllSubDomains.push({ key: ItemInfo1[k].ID, text: ItemInfo1[k].Title});
-
-      //  }
-
-      // console.log(ItemInfo);
 
       }
       else
       {
 
+    const updatedSelectedArray = this.state.SubDomainSelectedArray.filter(
+      (key: any) => key !== item.key
+    );
+    const updatedSelectedTextArray = this.state.SubDomainSelectedTextArray.filter(
+      (text: any) => text !== item.text
+    );
 
-        let ItemInfo1 = await this._service.getSubdomainsbyID(item.key);
-      
-
-      for (var k in ItemInfo1) {
-
-        const newArray = AllSubDomains.filter((item:any) =>{return item.key !== ItemInfo1[k].ID});
-
-  
-        AllSubDomains=newArray;
-      }
+    const updatedSubDomainSelectedArrayString: string = updatedSelectedArray.join(",");
+    this.setState({UpdateSubDomainIdString:updatedSubDomainSelectedArrayString})
 
 
-      }
+   const updatedSelectedTextArraySubDomainString: string = updatedSelectedTextArray.join(",");
 
-     //this.setState({ SubDomainItems: AllSubDomains });
- 
-      
+this.setState({SubDomainsFinalStringValue:updatedSelectedTextArraySubDomainString});
+
+    // Also remove from global arrays
+    AllSubDomainsSelected = AllSubDomainsSelected.filter((sd: any) => sd.key !== item.key);
+    AllSubDomainSavedIDValues = AllSubDomainSavedIDValues.filter((id: any) => id !== item.key);
+    AllSubDomainSavedTextValues = AllSubDomainSavedTextValues.filter((txt: any) => txt !== item.text);
+
+    // Update state immutably
+    this.setState({
+      SubDomainSelectedArray: updatedSelectedArray,
+      SubDomainSelectedTextArray: updatedSelectedTextArray
+    });
+
+    // Update joined values again
+    const AllSubDomainstingValues = updatedSelectedTextArray;
+    const AllSubDomainIDvalues = updatedSelectedArray.map((item: any) => item.toString());
+
+    AllSubDomainsFinalTextValues = AllSubDomainstingValues.join(", ");
+    AllSubDomainsFinalIDValue = AllSubDomainIDvalues.join(",");
+
+
+
+      } 
     }
 //Last
 
@@ -678,26 +714,45 @@ this.setState({ SubDomainItems: MyArra12 });
 
       this.handleServicesTest(this.state.ServiceGroupsSelectedArray);
 
+      this.setState({ ServicesItems: AllServices });
+
       }
       else
       {
 
+    const servicesToRemoveToRemove = await this._service.getServicesID(item.key);
+    const servicesIdsToRemove = servicesToRemoveToRemove.map((sd: any) => sd.ID);
+    const updatedServiceGroupsIds = this.state.ServiceGroupsSelectedArray.filter((id: any) => id !== item.key);
+    const updatedServiceGroupIdsString: string = updatedServiceGroupsIds.join(",");
+   const updatedServiceGroupTexts = this.state.ServiceGroupsSelectedTextArray.filter((text: any) => text !== item.text);
+   const updatedServiceGroupsString: string = updatedServiceGroupTexts.join(",");
 
-        let ItemInfo1 = await this._service.getServicesID(item.key);
-      
+    
+    const updatedServicegroupItems = this.state.ServicesItems.filter((sd: any) => !servicesIdsToRemove.includes(sd.key));
+    const updatedServiceGroupSelectedArray = this.state.ServicesSelectedArray.filter((sdKey:any) => !servicesIdsToRemove.includes(sdKey));
+    const updatedSubDomainSelectedTextArray = this.state.ServicesSelectedTextArray.filter((sdText:any) =>
+      !servicesToRemoveToRemove.some((sd: any) => sd.Title === sdText)
+    );
 
-      for (var k in ItemInfo1) {
+    this.setState({
+      ServiceGroupsSelectedArray: updatedServiceGroupsIds,
+      ServiceGroupsSelectedTextArray: updatedServiceGroupTexts,
+      ServicesItems: updatedServicegroupItems,
+      ServicesSelectedArray: updatedServiceGroupSelectedArray,
+      ServicesSelectedTextArray: updatedSubDomainSelectedTextArray
+      //SubDomainSelectedArray: [], // clear subdomain selection
+    });
 
-        const newArray = AllServices.filter((item:any) =>{return item.key !== ItemInfo1[k].ID});
+    //AllDomainsFinalSavedIDValue=updatedDomainIdsString.map(text => text.trim()).join(",");
 
-  
-        AllServices=newArray;
+        AllServiceGroupsFinalSavedIDValue = updatedServiceGroupIdsString;
+        AllServiceGroupsFinalSavedValue = updatedServiceGroupsString;
+
+        
+
       }
 
-
-      }
-
-     this.setState({ ServicesItems: AllServices });
+     
  
       
     }
@@ -785,17 +840,42 @@ this.setState({ ServicesItems: MyArra12 });
       else
       {
 
+         const updatedSelectedArray = this.state.ServicesSelectedArray.filter(
+      (key: any) => key !== item.key
+    );
+    const updatedSelectedTextArray = this.state.ServicesSelectedTextArray.filter(
+      (text: any) => text !== item.text
+    );
 
-        let ItemInfo1 = await this._service.getServicesID(item.key);
-      
+    const updatedServicesSelectedArrayString: string = updatedSelectedArray.join(",");
+    this.setState({UpdatedServicesIdString:updatedServicesSelectedArrayString})
 
-      for (var k in ItemInfo1) {
 
-        const newArray = AllServices.filter((item:any) =>{return item.key !== ItemInfo1[k].ID});
+   const updatedSelectedTextArrayServiceString: string = updatedSelectedTextArray.join(",");
 
-  
-        AllServices=newArray;
-      }
+this.setState({ServicesFinalStringValue:updatedSelectedTextArrayServiceString});
+
+    // Also remove from global arrays
+    AllServicesSelected= AllServicesSelected.filter((sd: any) => sd.key !== item.key);
+    AllServicesSavedIDValues = AllServicesSavedIDValues.filter((id: any) => id !== item.key);
+    AllServicesSavedTextValues = AllServicesSavedTextValues.filter((txt: any) => txt !== item.text);
+
+    // Update state immutably
+    this.setState({
+      ServicesSelectedArray: updatedSelectedArray,
+      ServicesSelectedTextArray: updatedSelectedTextArray
+    });
+
+    // Update joined values again
+    const AllServicesstingValues = updatedSelectedTextArray;
+    const AllServicesIDvalues = updatedSelectedArray.map((item: any) => item.toString());
+
+     AllServiceFinalSavedValue= AllServicesstingValues.join(", ");
+     AllServiceFinalSavedIDValue= AllServicesIDvalues.join(",");
+
+
+
+       
 
 
       }
@@ -1272,9 +1352,9 @@ this.setState({ CountryItems: MyArra12 });
           AllSubDomainsFinalIDValue,
          AllServiceGroupsFinalSavedValue,
         AllServiceGroupsFinalSavedIDValue,
-          AllServiceFinalSavedValue,
-          AllServiceFinalSavedIDValue,
-          AllRegionsFinalSavedValue,
+        AllServiceFinalSavedValue,
+        AllServiceFinalSavedIDValue,
+         AllRegionsFinalSavedValue,
           AllRegionsFinalSavedIDValue,
           AllCountriesSelected[count].key,
           AllCountriesSelected[count].text,
@@ -1363,8 +1443,10 @@ this.setState({ CountryItems: MyArra12 });
         myitemId,
         this.state.Name,
         ContentType,
-        AllDomainsFinalSavedValue,
-        AllDomainsFinalSavedIDValue,
+        // AllDomainsFinalSavedValue,
+        // AllDomainsFinalSavedIDValue,
+        updatedDomainTextsString,
+        this.state.UpdateDomainIdString,
         AllSubDomainsFinalTextValues,
         AllSubDomainsFinalIDValue,
         AllServiceGroupsFinalSavedValue,
