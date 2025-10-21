@@ -237,7 +237,23 @@ ServicesFinalStringValue:""
     
      this.GlobalService1 = new Service(this.props.url, this.props.context);
 
-     this.GeRecrords();
+     myitemId = this.getParam('SID');
+
+     this.GetAllConeteTypes();
+     this.GetAllDomains();
+     this.GetAllServiceGroups();
+     this.GetAllRegions();
+
+      
+
+     if(myitemId!="")
+     {
+
+      this.GeRecrords();
+
+     }
+
+     
   }
 
 
@@ -270,6 +286,7 @@ if(ItemInfo1.Status=="Pending")
     this.setState({AttachmentFiles:ItemInfo.AttachmentFiles})
     this.setState({Name: ItemInfo.Name });
     this.setState({MyContentTypeValue:ItemInfo.ReqcontenttypeID});
+    ContentType=ItemInfo.ContentTypes;
     this.setState({Clientname:ItemInfo.Client});
     this.setState({ContactId:ItemInfo.ContactPerson.EMail})
     this.setState({desc:ItemInfo.Description})
@@ -322,10 +339,10 @@ if(ItemInfo1.Status=="Pending")
 
     this.setState({CountryName:ItemInfo.Countries});
     
-   let ItemInfo1 = await this._service.getRegionbyTitle(this.state.CountryName);
-   let ItemInfo2 = await this._service.getRegionName(ItemInfo1.RegionId);
+   //let ItemInfo1 = await this._service.getRegionbyTitle(this.state.CountryName);
+   //let ItemInfo2 = await this._service.getRegionName(ItemInfo1.RegionId);
 
-   this.setState({MyRegionName:ItemInfo2.Title});
+   this.setState({MyRegionName:ItemInfo.Regions});
 
    console.log(ItemInfo1);
 
@@ -1086,8 +1103,8 @@ this.setState({ CountryItems: MyArra12 });
 
       const AllCountriesIDvalues:string[]=MyArray2.map((item:any) => item.toString());
 
-      AllCountryFinalSavedValue = AllCountriesinstingValues.join(", ");
-      AllCountryFinalSavedIDValue=AllCountriesIDvalues.join(",");
+      AllCountryFinalSavedValue = AllCountriesinstingValues.map(text => text.trim()).join(",");
+      AllCountryFinalSavedIDValue=AllCountriesIDvalues.map(text => text.trim()).join(",");
     
 
       }
@@ -1121,9 +1138,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
       CountriesSelectedTextArray: updatedSelectedTextArray
     });
 
-    // Update joined values again
-    //const AllCountriesstingValues = updatedSelectedTextArray;
-    //const AllCountriesIDvalues = updatedSelectedArray.map((item: any) => item.toString());
+ 
 
 
 
@@ -1393,9 +1408,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
           if(this.state.Name!="")
           {
 
-          for (var count=0;count<AllCountriesSelected.length;count++)
-          {
-
+       
            
 
               this._service.Save(
@@ -1412,9 +1425,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         AllServiceFinalSavedIDValue,
          AllRegionsFinalSavedValue,
           AllRegionsFinalSavedIDValue,
-          AllCountriesSelected[count].key,
-          AllCountriesSelected[count].text,
-          
+          AllCountryFinalSavedIDValue,
+          AllCountryFinalSavedValue,
           this.state.Clientname,
           (this.state.ContactId == null ? 0:this.state.ContactId.Id),
           this.state.WiproSynergy,
@@ -1439,7 +1451,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
      
           }
 
-        }
+       // }
 
 
     }
