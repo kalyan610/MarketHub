@@ -527,13 +527,7 @@ if(ItemInfo1.Status=="Pending")
    const updatedDomainTexts = this.state.DomainSelectedTextArray.filter((text: any) => text !== item.text);
    const updatedDomainTextsString: string = updatedDomainTexts.join(",");
 
-    // const updatedDomainIdsString: string = updatedDomainIds.map((id:any) => id.toString()).join(",");
-    // updatedDomainTextsString = updatedDomainTexts.join(",");
-
-    // this.setState({UpdateDomainIdString:updatedDomainIdsString})
-  
-
-    const updatedSubDomainItems = this.state.SubDomainItems.filter((sd: any) => !subDomainIdsToRemove.includes(sd.key));
+   const updatedSubDomainItems = this.state.SubDomainItems.filter((sd: any) => !subDomainIdsToRemove.includes(sd.key));
     const updatedSubDomainSelectedArray = this.state.SubDomainSelectedArray.filter((sdKey:any) => !subDomainIdsToRemove.includes(sdKey));
     const updatedSubDomainSelectedTextArray = this.state.SubDomainSelectedTextArray.filter((sdText:any) =>
       !subDomainsToRemove.some((sd: any) => sd.Title === sdText)
@@ -545,17 +539,25 @@ if(ItemInfo1.Status=="Pending")
       SubDomainItems: updatedSubDomainItems,
       SubDomainSelectedArray: updatedSubDomainSelectedArray,
       SubDomainSelectedTextArray: updatedSubDomainSelectedTextArray
-      //SubDomainSelectedArray: [], // clear subdomain selection
+      
     });
-
-    //AllDomainsFinalSavedIDValue=updatedDomainIdsString.map(text => text.trim()).join(",");
 
         AllDomainsFinalSavedIDValue = updatedDomainIdsString;
         AllDomainsFinalSavedValue = updatedDomainTextsString;
 
+    if (updatedSubDomainSelectedArray.length === 0) {
+    AllSubDomainsFinalTextValues = "";
+    AllSubDomainsFinalIDValue = "";
+  } else {
+    AllSubDomainsFinalTextValues = updatedSubDomainSelectedTextArray.join(",");
+    AllSubDomainsFinalIDValue = updatedSubDomainSelectedArray.map((id: any) => id.toString()).join(",");
+  }
+
+
+
       }
 
-     //this.setState({ SubDomainItems: AllSubDomains });
+     
  
 
     }
@@ -670,8 +672,8 @@ this.setState({SubDomainsFinalStringValue:updatedSelectedTextArraySubDomainStrin
     const AllSubDomainstingValues = updatedSelectedTextArray;
     const AllSubDomainIDvalues = updatedSelectedArray.map((item: any) => item.toString());
 
-    AllSubDomainsFinalTextValues = AllSubDomainstingValues.join(", ");
-    AllSubDomainsFinalIDValue = AllSubDomainIDvalues.join(",");
+    AllSubDomainsFinalTextValues = AllSubDomainstingValues.map((text:any) => text.trim()).join(",")
+    AllSubDomainsFinalIDValue = AllSubDomainIDvalues.map((text:any) => text.trim()).join(",")
 
 
 
@@ -737,8 +739,8 @@ this.setState({SubDomainsFinalStringValue:updatedSelectedTextArraySubDomainStrin
       const AllServiceGroupsstingValues: string[]=myAraay2;
       const AllServiceGroupsIDvalues:string[]=myAraay1.map((item:any) => item.toString());;
 
-      AllServiceGroupsFinalSavedValue = AllServiceGroupsstingValues.join(", ");
-      AllServiceGroupsFinalSavedIDValue=AllServiceGroupsIDvalues.join(",");
+      AllServiceGroupsFinalSavedValue = AllServiceGroupsstingValues.map(text => text.trim()).join(",");
+      AllServiceGroupsFinalSavedIDValue=AllServiceGroupsIDvalues.map(text => text.trim()).join(",");
 
       console.log(AllServiceGroupsFinalSavedValue);
       console.log(AllServiceGroupsFinalSavedIDValue);
@@ -751,18 +753,18 @@ this.setState({SubDomainsFinalStringValue:updatedSelectedTextArraySubDomainStrin
       else
       {
 
-    const servicesToRemoveToRemove = await this._service.getServicesID(item.key);
-    const servicesIdsToRemove = servicesToRemoveToRemove.map((sd: any) => sd.ID);
+    const servicesToRemove  = await this._service.getServicesID(item.key);
+    const servicesIdsToRemove = servicesToRemove .map((sd: any) => sd.ID);
     const updatedServiceGroupsIds = this.state.ServiceGroupsSelectedArray.filter((id: any) => id !== item.key);
-    const updatedServiceGroupIdsString: string = updatedServiceGroupsIds.join(",");
+    //const updatedServiceGroupIdsString: string = updatedServiceGroupsIds.join(",");
    const updatedServiceGroupTexts = this.state.ServiceGroupsSelectedTextArray.filter((text: any) => text !== item.text);
-   const updatedServiceGroupsString: string = updatedServiceGroupTexts.join(",");
+   //const updatedServiceGroupsString: string = updatedServiceGroupTexts.join(",");
 
     
     const updatedServicegroupItems = this.state.ServicesItems.filter((sd: any) => !servicesIdsToRemove.includes(sd.key));
     const updatedServiceGroupSelectedArray = this.state.ServicesSelectedArray.filter((sdKey:any) => !servicesIdsToRemove.includes(sdKey));
-    const updatedSubDomainSelectedTextArray = this.state.ServicesSelectedTextArray.filter((sdText:any) =>
-      !servicesToRemoveToRemove.some((sd: any) => sd.Title === sdText)
+    const updatedServicesSelectedTextArray = this.state.ServicesSelectedTextArray.filter((sdText:any) =>
+      !servicesToRemove .some((sd: any) => sd.Title === sdText)
     );
 
     this.setState({
@@ -770,16 +772,29 @@ this.setState({SubDomainsFinalStringValue:updatedSelectedTextArraySubDomainStrin
       ServiceGroupsSelectedTextArray: updatedServiceGroupTexts,
       ServicesItems: updatedServicegroupItems,
       ServicesSelectedArray: updatedServiceGroupSelectedArray,
-      ServicesSelectedTextArray: updatedSubDomainSelectedTextArray
+      ServicesSelectedTextArray: updatedServicesSelectedTextArray
       //SubDomainSelectedArray: [], // clear subdomain selection
     });
 
     //AllDomainsFinalSavedIDValue=updatedDomainIdsString.map(text => text.trim()).join(",");
 
-        AllServiceGroupsFinalSavedIDValue = updatedServiceGroupIdsString;
-        AllServiceGroupsFinalSavedValue = updatedServiceGroupsString;
+        AllServiceGroupsFinalSavedIDValue = updatedServiceGroupsIds.join(",");
+        AllServiceGroupsFinalSavedValue = updatedServiceGroupTexts.join(",");
 
-        
+        //Added
+
+
+         if (updatedServiceGroupSelectedArray.length === 0) {
+    // All service groups removed → clear services entirely
+    AllServiceFinalSavedValue = "";
+    AllServiceFinalSavedIDValue = "";
+  } else {
+    const clearedServiceIDs = updatedServiceGroupSelectedArray.map((id: any) => id.toString());
+    const clearedServiceTexts = updatedServicesSelectedTextArray.map((txt: any) => txt.trim());
+    AllServiceFinalSavedValue = clearedServiceTexts.join(",");
+    AllServiceFinalSavedIDValue = clearedServiceIDs.join(",");
+  }
+        //End
 
       }
 
@@ -861,8 +876,8 @@ this.setState({ ServicesItems: MyArra12 });
 
       const  AllServicesServicesIDValue:string[]=MyArray2.map((item:any) => item.toString());
 
-      AllServiceFinalSavedValue=AllServicesstringValues.join(",");
-      AllServiceFinalSavedIDValue=AllServicesServicesIDValue.join(",");
+      AllServiceFinalSavedValue=AllServicesstringValues.map(text => text.trim()).join(",");
+      AllServiceFinalSavedIDValue=AllServicesServicesIDValue.map(text => text.trim()).join(",");
 
       console.log(AllServiceFinalSavedValue);
 
@@ -901,8 +916,8 @@ this.setState({ServicesFinalStringValue:updatedSelectedTextArrayServiceString});
     const AllServicesstingValues = updatedSelectedTextArray;
     const AllServicesIDvalues = updatedSelectedArray.map((item: any) => item.toString());
 
-     AllServiceFinalSavedValue= AllServicesstingValues.join(", ");
-     AllServiceFinalSavedIDValue= AllServicesIDvalues.join(",");
+     AllServiceFinalSavedValue= AllServicesstingValues.map((text:any) => text.trim()).join(",")
+     AllServiceFinalSavedIDValue= AllServicesIDvalues.map((text:any) => text.trim()).join(",")
 
 
 
@@ -1409,9 +1424,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
           {
 
        
-           
-
-              this._service.Save(
+          this._service.Save(
 
           this.state.Name,
           ContentType,
@@ -1439,7 +1452,9 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
           {
       
             console.log(data);
+             alert('Record submitted successfully');
 
+            //window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
           
           
           });
@@ -1447,14 +1462,9 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
           }
 
-          alert('Record submitted successfully');
-          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
-     
+         
           }
-
-       // }
-
-
+       
     }
      
    private onApproveClick():void{
@@ -1489,7 +1499,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         {
       
           alert('Record updated successfully');
-          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+          //window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
       
          
       
@@ -1576,7 +1586,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 <br></br>
 
       {/* <b><label className={styles.HeadLable}>Marketing Hub</label></b><br/>   */}
-      <b><label className={styles.labelsFonts}>Title of Document <label className={styles.recolorss}>*</label></label></b><br/>  
+      <b><label className={styles.labelsFonts}>Title of Document1 <label className={styles.recolorss}>*</label></label></b><br/>  
       <input type="text" name="txtyourName" value={this.state.Name} onChange={this.changeYourname.bind(this)} className={styles.links}/><br></br>
 
       <b><label className={styles.labelsFonts}>Content Types <label className={styles.recolorss} >*</label></label></b><br></br> 
@@ -1614,7 +1624,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
 <br></br>
     
-  <b><label className={styles.labelsFonts}>Service Groups1 <label className={styles.recolorss} >*</label></label></b><br></br> 
+  <b><label className={styles.labelsFonts}>Service Groups <label className={styles.recolorss} >*</label></label></b><br></br> 
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Serivce Groups"
          options={this.state.ServiceGroupItems}
@@ -1626,7 +1636,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
             </ComboBox>
  <br></br>
 
- <b><label className={styles.labelsFonts}>Services 1 <label className={styles.recolorss} >*</label></label></b><br></br> 
+ <b><label className={styles.labelsFonts}>Services  <label className={styles.recolorss} >*</label></label></b><br></br> 
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Services"
          options={this.state.ServicesItems}
