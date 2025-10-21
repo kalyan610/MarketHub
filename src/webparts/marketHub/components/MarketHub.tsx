@@ -157,8 +157,10 @@ CountryName:any;
 MyRegionName:any;
 UpdateDomainIdString:any;
 UpdateSubDomainIdString:any;
+UpdateCountryIdString:any;
 UpdatedServicesIdString:any;
 SubDomainsFinalStringValue:any;
+CountryFinalStringValue:any;
 ServicesFinalStringValue:any;
 
 }
@@ -220,8 +222,10 @@ CountryName:"",
 MyRegionName:"",
 UpdateDomainIdString:"",
 UpdateSubDomainIdString:"",
+UpdateCountryIdString:"",
 UpdatedServicesIdString:"",
 SubDomainsFinalStringValue:"",
+CountryFinalStringValue:"",
 ServicesFinalStringValue:""
 
 
@@ -247,6 +251,10 @@ ServicesFinalStringValue:""
     console.log(AllCountryFinalSavedIDValue);
     console.log(AllSubDomainsFinalTextValues);
     
+let ItemInfo1 = await this._service.getItemByID(myitemId);
+
+if(ItemInfo1.Status=="Pending")
+{
 
 
      if(myitemId!="")
@@ -350,7 +358,13 @@ ServicesFinalStringValue:""
 
      }
 
+     else
+     {
 
+      alert('Record is already Approved or Rejected')
+     }
+
+    }
 
 
     private changeYourname(data: any): void {
@@ -944,8 +958,8 @@ var myAraay2:any=[];
       const AllRegionstingValues: string[]=myAraay2;
       const AllRegionIDvalues:string[]=myAraay1.map((item:any) => item.toString());
 
-      AllRegionsFinalSavedValue = AllRegionstingValues.join(", ");
-      AllRegionsFinalSavedIDValue=AllRegionIDvalues.join(",");
+      AllRegionsFinalSavedValue = AllRegionstingValues.map(text => text.trim()).join(",");
+      AllRegionsFinalSavedIDValue=AllRegionIDvalues.map(text => text.trim()).join(",");
 
 
       console.log(AllRegionsFinalSavedValue);
@@ -953,29 +967,51 @@ var myAraay2:any=[];
 
 this.handleRegionsTest(this.state.RegionSelectArray);
    
-
       console.log(ItemInfo);
+
+      this.setState({ CountryItems: AllCountries })
 
       }
       else
       {
 
+        
+  const subCountriesToRemove = await this._service.getCountryID(item.key);
+  const subCountriesIdsToRemove = subCountriesToRemove.map((sd: any) => sd.ID);
 
-        let ItemInfo1 = await this._service.getCountryID(item.key);
-      
+  const updatedRegionsIds = this.state.RegionSelectArray.filter((id: any) => id !== item.key);
+  const updatedRegionsTexts = this.state.RegionSelectedTextArray.filter((text: any) => text !== item.text);
 
-      for (var k in ItemInfo1) {
+  const updatedCountryItems = this.state.CountryItems.filter(
+    (sd: any) => !subCountriesIdsToRemove.includes(sd.key)
+  );
+  const updatedCountrySelectedArray = this.state.CountriesSelectedArray.filter(
+    (sdKey: any) => !subCountriesIdsToRemove.includes(sdKey)
+  );
+  const updatedCountrySelectedTextArray = this.state.CountriesSelectedTextArray.filter(
+    (sdText: any) => !subCountriesIdsToRemove.some((sd: any) => sd.Title === sdText)
+  );
 
-        const newArray = AllCountries.filter((item:any) =>{return item.key !== ItemInfo1[k].ID});
+  // ✅ Keep arrays in state
+  this.setState({
+    RegionSelectArray: updatedRegionsIds,
+    RegionSelectedTextArray: updatedRegionsTexts,
+    CountryItems: updatedCountryItems,
+    CountriesSelectedArray: updatedCountrySelectedArray,
+    CountriesSelectedTextArray: updatedCountrySelectedTextArray
+  });
 
-  
-        AllCountries=newArray;
+  // ✅ Convert to strings only for saving or logging
+  AllRegionsFinalSavedIDValue = updatedRegionsIds.map((id: any) => id.toString().trim()).join(",");
+  AllRegionsFinalSavedValue = updatedRegionsTexts.map((txt: any) => txt.trim()).join(",");
+
+  console.log("Updated Regions (IDs):", AllRegionsFinalSavedIDValue);
+  console.log("Updated Regions (Names):", AllRegionsFinalSavedValue);
+
+
       }
 
-
-      }
-
-     //this.setState({ CountryItems: AllCountries });
+    
  
       
     }
@@ -1059,21 +1095,41 @@ this.setState({ CountryItems: MyArra12 });
       {
 
 
-        let ItemInfo1 = await this._service.getCountryID(item.key);
-      
+      const updatedSelectedArray = this.state.CountriesSelectedArray.filter(
+      (key: any) => key !== item.key
+    );
+    const updatedSelectedTextArray = this.state.CountriesSelectedTextArray.filter(
+      (text: any) => text !== item.text
+    );
 
-      for (var k in ItemInfo1) {
+    const updatedCountrySelectedArrayString: string = updatedSelectedArray.join(",");
+    this.setState({UpdateCountryIdString:updatedCountrySelectedArrayString})
 
-        const newArray = AllCountries.filter((item:any) =>{return item.key !== ItemInfo1[k].ID});
 
-  
-        AllCountries=newArray;
+   const updatedSelectedTextArrayCountryString: string = updatedSelectedTextArray.join(",");
+
+this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
+
+    // Also remove from global arrays
+    AllCountriesSelected = AllCountriesSelected.filter((sd: any) => sd.key !== item.key);
+    AllCountrySavedIDValues = AllCountrySavedIDValues.filter((id: any) => id !== item.key);
+    AllCountrySavedValues = AllCountrySavedValues.filter((txt: any) => txt !== item.text);
+
+    // Update state immutably
+    this.setState({
+      CountriesSelectedArray: updatedSelectedArray,
+      CountriesSelectedTextArray: updatedSelectedTextArray
+    });
+
+    // Update joined values again
+    //const AllCountriesstingValues = updatedSelectedTextArray;
+    //const AllCountriesIDvalues = updatedSelectedArray.map((item: any) => item.toString());
+
+
+
       }
 
-
-      }
-
-     //this.setState({ CountryItems: AllCountries });
+     
  
       
     }
