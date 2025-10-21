@@ -1448,6 +1448,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
           }
 
           alert('Record submitted successfully');
+          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
      
           }
 
@@ -1488,6 +1489,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         {
       
           alert('Record updated successfully');
+          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
       
          
       
