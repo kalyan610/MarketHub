@@ -92,6 +92,9 @@ export default class Service {
 
     }
 
+
+ 
+
        public async getUserByLogin(LoginName:string):Promise<any>{
         try{
             const user = await sp.web.siteUsers.getByLoginName(LoginName).get();
@@ -417,6 +420,19 @@ private async Reject(
       
 
     }
+
+
+        public async getItemByID1(ItemID: any): Promise<any> {
+    try {
+
+const selectedList = 'Services';
+const Item: any[] = await sp.web.lists.getByTitle(selectedList).items.select("ServiceName").filter("ID eq '" + ItemID + "'").get();
+        return Item[0];
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 }

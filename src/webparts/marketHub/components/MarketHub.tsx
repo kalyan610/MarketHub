@@ -297,6 +297,7 @@ if(ItemInfo1.Status=="Pending")
      {
 
       this.setState({WiproSynergyKey:"No"})
+      
 
      }
 
@@ -305,6 +306,7 @@ if(ItemInfo1.Status=="Pending")
       {
 
          this.setState({WiproSynergyKey:"Yes"})
+         
       }
      
    
@@ -793,8 +795,33 @@ this.setState({SubDomainsFinalStringValue:updatedSelectedTextArraySubDomainStrin
     const clearedServiceTexts = updatedServicesSelectedTextArray.map((txt: any) => txt.trim());
     AllServiceFinalSavedValue = clearedServiceTexts.join(",");
     AllServiceFinalSavedIDValue = clearedServiceIDs.join(",");
+
+    //New
+
+    const serviceIdsArray = AllServiceFinalSavedIDValue
+  ? AllServiceFinalSavedIDValue.split(",").map(id => id.trim())
+  : [];
+
+let allServiceNames: string[] = [];
+
+for (const id of serviceIdsArray) {
+  console.log("Processing Service ID:", id);
+
+  const ItemInfo11 = await this._service.getItemByID1(id);
+
+  if (ItemInfo11 && ItemInfo11.ServiceName) {
+    allServiceNames.push(ItemInfo11.ServiceName.trim());
   }
-        //End
+}
+
+AllServiceFinalSavedValue = allServiceNames.join(",");
+
+//END
+
+
+
+  }
+        
 
       }
 
@@ -921,12 +948,34 @@ this.setState({ServicesFinalStringValue:updatedSelectedTextArrayServiceString});
 
 
 
+     //New
+
+         const serviceIdsArray = AllServiceFinalSavedIDValue
+  ? AllServiceFinalSavedIDValue.split(",").map(id => id.trim())
+  : [];
+
+let allServiceNames: string[] = [];
+
+for (const id of serviceIdsArray) {
+  console.log("Processing Service ID:", id);
+
+  const ItemInfo11 = await this._service.getItemByID1(id);
+
+  if (ItemInfo11 && ItemInfo11.ServiceName) {
+    allServiceNames.push(ItemInfo11.ServiceName.trim());
+  }
+}
+
+AllServiceFinalSavedValue = allServiceNames.join(",");
+
+
+
        
 
 
       }
 
-     //this.setState({ ServicesItems: AllServices });
+
  
       
     }
@@ -1205,19 +1254,13 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
     this.setState({  
 
-      WiproSynergyKey: option.key  
-
+      WiproSynergyKey: option.key,
+      WiproSynergy: option.text
             
       });  
 
 
-      this.setState({  
-
-        WiproSynergy: option.text  
-
       
-  
-        });  
 
       }
 
@@ -1454,7 +1497,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
             console.log(data);
              alert('Record submitted successfully');
 
-            //window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+            window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
           
           
           });
@@ -1474,6 +1517,10 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
     let year1 =(this.state.dtLastReview.getFullYear());
 
     let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+    
+
+    console.log()
+
    
       this._service.Approve(
 
@@ -1490,7 +1537,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         AllServiceFinalSavedIDValue,
         FinalLastReviewDate1,
         (this.state.ContactId == null ? 0:this.state.ContactId.Id),
-        this.state.WiproSynergy,
+        this.state.WiproSynergyKey,
         this.state.desc,
         this.state.keywords,
         this.state.contentypeKey
@@ -1499,7 +1546,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         {
       
           alert('Record updated successfully');
-          //window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
       
          
       
