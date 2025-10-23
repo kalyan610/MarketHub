@@ -162,6 +162,7 @@ UpdatedServicesIdString:any;
 SubDomainsFinalStringValue:any;
 CountryFinalStringValue:any;
 ServicesFinalStringValue:any;
+isSaving:boolean;
 
 }
 
@@ -226,7 +227,8 @@ UpdateCountryIdString:"",
 UpdatedServicesIdString:"",
 SubDomainsFinalStringValue:"",
 CountryFinalStringValue:"",
-ServicesFinalStringValue:""
+ServicesFinalStringValue:"",
+isSaving:false
 
 
 
@@ -1438,6 +1440,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         else
 
           {
+            this.setState({ isSaving: true });
 
 
         let date1=(this.state.dtLastReview.getDate()+1);
@@ -1521,7 +1524,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
     console.log()
 
-   
+   this.setState({ isSaving: true });
+
       this._service.Approve(
 
         myitemId,
@@ -1564,6 +1568,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
     let year1 =(this.state.dtLastReview.getFullYear());
 
     let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+
+    this.setState({ isSaving: true });
    
       this._service.Reject(
 
@@ -1783,7 +1789,10 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 <br></br>
 
 
-<PrimaryButton text="Submit" onClick={this.OnBtnClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} /><br></br>
+<PrimaryButton text="Submit" onClick={this.OnBtnClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} 
+disabled={this.state.isSaving}
+
+/><br></br>
 
 
       </Stack>
@@ -1934,8 +1943,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
 <Stack horizontal tokens={stackTokens1}>
 
-<PrimaryButton text="Approve" onClick={this.onApproveClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} /><br></br>
-<PrimaryButton text="Reject" onClick={this.onRejectClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} /><br></br>
+<PrimaryButton text="Approve" onClick={this.onApproveClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} disabled={this.state.isSaving}/><br></br>
+<PrimaryButton text="Reject" onClick={this.onRejectClick.bind(this)} styles={stackButtonStyles} className={styles.welcomeImage} disabled={this.state.isSaving}/><br></br>
 
 
         </Stack>
