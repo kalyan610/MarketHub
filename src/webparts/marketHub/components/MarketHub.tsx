@@ -315,6 +315,7 @@ if(ItemInfo1.Status=="Pending")
 
     this.setState({DomainSelectArray:ItemInfo.DomainIDS.split(',').map(Number)});
     this.setState({DomainSelectedTextArray:ItemInfo.Domains.split(',')});
+    
     this.handleDomainsTest(this.state.DomainSelectArray);
       AllDomainsFinalSavedValue = ItemInfo.Domains;
       AllDomainsFinalSavedIDValue=ItemInfo.DomainIDS;
@@ -1357,6 +1358,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
     private OnBtnClick():void{
 
+      alert('one');
+
       if(this.state.Name=='')
       {
 
@@ -1376,12 +1379,12 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
       }
 
-        else if(AllSubDomainsSelected.length==0)
-      {
+      //   else if(AllSubDomainsSelected.length==0)
+      // {
        
-        alert('Please select Sub Domain Items')
+      //   alert('Please select Sub Domain Items')
 
-      }
+      // }
 
       else if(AllServiceGroupsSelected.length==0)
       {
@@ -1390,12 +1393,12 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
       }
 
-       else if(AllServicesSelected.length==0)
-      {
+      //  else if(AllServicesSelected.length==0)
+      // {
        
-        alert('Please select Service Items')
+      //   alert('Please select Service Items')
 
-      }
+      // }
 
        else if(AllRegionsSelected.length==0)
       {
