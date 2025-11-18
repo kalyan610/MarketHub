@@ -110,16 +110,14 @@
 {
 
  
-
-  width: 42%;
-
-  height:15px;
-
-  font-size: medium;
-
-  font-family: "Cambria";
-
-  font-weight: $ms-font-weight-regular;
+  max-width: 500px;     // adjust as needed
+  height: 42px;         // same as PeoplePicker height
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 4px;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+  background-color: #fff;
 
 }
 
@@ -147,6 +145,19 @@
   font-size: 14px;
 
   font-family: Cambria;
+
+ 
+}
+
+
+.labelsFonts1
+{
+
+  font-size: 14px;
+
+  font-family: Cambria;
+  
+  color: #7F7F7F;
 
  
 }

@@ -10,7 +10,7 @@ import { ComboBox,IComboBoxOption,IComboBoxStyles } from 'office-ui-fabric-react
 import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
 import {PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 
-import { DatePicker } from 'office-ui-fabric-react/lib/DatePicker';
+//import { DatePicker } from 'office-ui-fabric-react/lib/DatePicker';
 import {Icon} from 'office-ui-fabric-react/lib/Icon';
 
 import { TextField } from '@fluentui/react/lib/TextField';
@@ -22,6 +22,8 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   dropdown: { width: 300 },
 };
 
+let  Myvalues:Array<string>=[];
+let  Myvalues1:Array<string>=[];
 
 const stackTokens1 = { childrenGap: 30 };
 
@@ -33,7 +35,7 @@ const WiproSynergyOptions: IChoiceGroupOption[] =
   { key: "No", text: "No" }];  
 
 
-  let updatedDomainTextsString='';
+  //let updatedDomainTextsString='';
 
 //var DomainSelectArray:any=[];
 
@@ -45,14 +47,18 @@ const WiproSynergyOptions: IChoiceGroupOption[] =
 
 let ContentType='';
 
-let Contact='';
+//let Contact='';
 
 let myitemId='';
+
+let FinalRegions='';
+
+//let myFinalSystemOwner='';
 
 let AllDomainsFinalSavedValue='';
 let AllDomainsFinalSavedIDValue='';
 
-
+//let ThirdBussinesowner='';
 
 var AllDomainSavedValues:any=[];
 var AllDomainsSavedIDValues:any=[];
@@ -99,6 +105,8 @@ let AllCountryFinalSavedIDValue:any=[];
 
 //let MyTest:any=[];
 
+//let defaultUsers:string[]=[];
+
 const stackButtonStyles: Partial<IStackStyles> = { root: { width: 20 } };
 
 export interface IMarketHub
@@ -123,8 +131,9 @@ ContactId:any;
 WiproSynergy:any;
 WiproSynergyKey:any;
 
-dtLastReview:any;
+//dtLastReview:any;
 desc:any;
+comments:any;
 
 keywords:any;
 FileValuerecived:any;
@@ -163,6 +172,9 @@ SubDomainsFinalStringValue:any;
 CountryFinalStringValue:any;
 ServicesFinalStringValue:any;
 isSaving:boolean;
+SystemownerEmailArray:any;
+
+FinalSystemOwnersString:any;
 
 }
 
@@ -195,8 +207,9 @@ export default class MarketHub extends React.Component<IMarketHubProps,IMarketHu
      ContactId:[],
      WiproSynergy:"",
      WiproSynergyKey:"",
-     dtLastReview:"",
+     //dtLastReview:"",
      desc:"",
+     comments:"",
      keywords:"",
      FileValuerecived:[],
      disableFileUploadrecived:false,
@@ -228,7 +241,9 @@ UpdatedServicesIdString:"",
 SubDomainsFinalStringValue:"",
 CountryFinalStringValue:"",
 ServicesFinalStringValue:"",
-isSaving:false
+isSaving:false,
+SystemownerEmailArray:[],
+FinalSystemOwnersString:""
 
 
 
@@ -269,9 +284,9 @@ isSaving:false
     console.log(AllCountryFinalSavedIDValue);
     console.log(AllSubDomainsFinalTextValues);
     
-let ItemInfo1 = await this._service.getItemByID(myitemId);
+let ItemInfo = await this._service.getItemByID(myitemId);
 
-if(ItemInfo1.Status=="Pending")
+if(ItemInfo.Status=="Pending")
 {
 
 
@@ -283,14 +298,39 @@ if(ItemInfo1.Status=="Pending")
       this.GetAllServiceGroups();
       
 
-    let ItemInfo = await this._service.getItemByID(myitemId);
+    //let ItemInfo = await this._service.getItemByID(myitemId);
 
     this.setState({AttachmentFiles:ItemInfo.AttachmentFiles})
     this.setState({Name: ItemInfo.Name });
     this.setState({MyContentTypeValue:ItemInfo.ReqcontenttypeID});
     ContentType=ItemInfo.ContentTypes;
     this.setState({Clientname:ItemInfo.Client});
-    this.setState({ContactId:ItemInfo.ContactPerson.EMail})
+
+
+    
+
+    for(var count=0;count<ItemInfo.ContactPerson.length;count++)
+
+      {
+    let userInfo1 = await this._service.getUserByEmail(ItemInfo.ContactPerson[count].EMail);
+    //Myvalues.push(userInfo1.Id);
+     Myvalues.push(userInfo1.Email);
+     Myvalues1.push(userInfo1.Id);
+    console.log(userInfo1);
+
+      }
+
+this.setState({SystemownerEmailArray:Myvalues1});
+this.setState({ContactId:Myvalues});
+
+//check
+
+
+
+
+
+
+    //END
     this.setState({desc:ItemInfo.Description})
     this.setState({keywords:ItemInfo.Keywords})
 
@@ -328,14 +368,26 @@ if(ItemInfo1.Status=="Pending")
     AllServiceGroupsFinalSavedValue=ItemInfo.ServiceGroups;
     AllServiceGroupsFinalSavedIDValue=ItemInfo.ServiceGroupIDS;
 
+    if(ItemInfo.SubDomainIDS!=null)
+    {
+
+    
     this.setState({SubDomainSelectedArray:ItemInfo.SubDomainIDS.split(',').map(Number)});
     this.setState({SubDomainSelectedTextArray:ItemInfo.SubDomains.split(',')});
-     AllSubDomainsFinalIDValue=ItemInfo.SubDomainIDS;
+    AllSubDomainsFinalIDValue=ItemInfo.SubDomainIDS;
     AllSubDomainsFinalTextValues=ItemInfo.SubDomains;
+    }
 
    
+    if(ItemInfo.ServicesIDS!=null)
+    {
+
       this.setState({ServicesSelectedArray:ItemInfo.ServicesIDS.split(',').map(Number)});
-    this.setState({ServicesSelectedTextArray:ItemInfo.Services.split(',')});
+      this.setState({ServicesSelectedTextArray:ItemInfo.Services.split(',')});
+
+    }
+      
+    
      AllServiceFinalSavedValue=ItemInfo.Services;
     //AllServiceGroupsFinalSavedValue=ItemInfo.Services;
     AllServiceFinalSavedIDValue=ItemInfo.ServicesIDS;
@@ -344,21 +396,24 @@ if(ItemInfo1.Status=="Pending")
 
     this.setState({CountryName:ItemInfo.Countries});
     
-   //let ItemInfo1 = await this._service.getRegionbyTitle(this.state.CountryName);
-   //let ItemInfo2 = await this._service.getRegionName(ItemInfo1.RegionId);
+  
 
    this.setState({MyRegionName:ItemInfo.Regions});
 
-   console.log(ItemInfo1);
+   FinalRegions=ItemInfo.Regions;
+
+   //alert(FinalRegions);
+
+   //console.log(ItemInfo1);
 
 
   this.setState({AttachmentFiles:ItemInfo.AttachmentFiles})
 
-     let strdoj= ItemInfo.LastReview.split('T');
-     strdoj[0].replace("-","/");
-    let mainstr=strdoj[0].replace("-","/");
-    let strToDate = new Date(mainstr);
-    this.setState({dtLastReview:strToDate})
+    //  let strdoj= ItemInfo.LastReview.split('T');
+    //  strdoj[0].replace("-","/");
+    // let mainstr=strdoj[0].replace("-","/");
+    // let strToDate = new Date(mainstr);
+    // this.setState({dtLastReview:strToDate})
 
 
       this.setState({contentypeKey:ItemInfo.ReqcontenttypeID})
@@ -397,6 +452,8 @@ if(ItemInfo1.Status=="Pending")
 
 
      public async GetAllConeteTypes() {
+
+      //alert('one');
 
 
       var data = await this._service.GetAllContentTypes();
@@ -1224,33 +1281,6 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
     }
 
 
-    private async _getPeoplePickerItems(items: any[]) {
-  console.log('Items:', items);
-
-  if(items.length>0)
-  {
-
-    Contact = items[0].text;
-
-    let userInfo = this._service.getUserByLogin(items[0].loginName).then((info:any)=>{
-    this.setState({ContactId:info});
-    //ContatcNamekey=this.state.ContactId.Id;
-    console.log(userInfo)
-    console.log(Contact)
-    
-});
-
-  }
-
-  else
-  {
-
-    this.setState({ContactId:null});
-  }
-
-
-
-}
 
 
   public ChangeWiproSynergy(ev: React.FormEvent<HTMLInputElement>, option: any): void {  
@@ -1267,23 +1297,66 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
       }
 
-  private _onSelectDate = (date: Date | null | undefined): void => {
-    this.setState({ dtLastReview: date });
-   
-   
-};
 
-  private _onFormatDate = (date: Date): string => {
-      return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+
+private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
+
+  let userIds: number[] = [];
+  let userEmails: string[] = [];
+
+  // Loop through all selected items
+  for (let i = 0; i < items.length; i++) {
+
+    let loginName = items[i].loginName;
+
+    // Get user by login name
+    const userInfo = await this._service.getUserByLogin(loginName);
+
+    // Save ID and email
+    userIds.push(userInfo.Id);
+    userEmails.push(items[i].secondaryText);  // usually email
+  }
+
+  // Create comma-separated string of all selected users
+  const finalSystemOwner = userEmails.join(",");
+
+  console.log("User IDs:", userIds);
+  console.log("Emails:", userEmails);
+  console.log("Comma separated:", finalSystemOwner);
+
+  // Save into state
+  this.setState({
+    SystemownerEmailArray: userIds,
+    FinalSystemOwnersString: finalSystemOwner
+  });
+}
+
+
+
+//   private _onSelectDate = (date: Date | null | undefined): void => {
+//     this.setState({ dtLastReview: date });
+   
+   
+// };
+
+  // private _onFormatDate = (date: Date): string => {
+  //     return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
 
      
-  };
+  // };
 
    private changedesc(data: any): void {
 
         this.setState({ desc: data.target.value });
   
       }
+
+       private changecoments(data: any): void {
+
+        this.setState({ comments: data.target.value });
+  
+      }
+
 
        private changeKeywords(data: any): void {
 
@@ -1358,7 +1431,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
     private OnBtnClick():void{
 
-      alert('one');
+      //alert('two');
 
       if(this.state.Name=='')
       {
@@ -1428,11 +1501,11 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         alert('Please select Wipro Synergy')
       }
 
-      else if(this.state.dtLastReview=='')
-        {
+      // else if(this.state.dtLastReview=='')
+      //   {
   
-          alert('Please select Last Review Date')
-        }
+      //     alert('Please select Last Review Date')
+      //   }
 
          else if(this.state.FileValuerecived.length==0)
         {
@@ -1446,16 +1519,16 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
             this.setState({ isSaving: true });
 
 
-        let date1=(this.state.dtLastReview.getDate()+1);
+        // let date1=(this.state.dtLastReview.getDate()+1);
 
-        console.log(date1);
+        // console.log(date1);
 
-        let month1= (this.state.dtLastReview.getMonth()+1);
+        // let month1= (this.state.dtLastReview.getMonth()+1);
 
-        let year1 =(this.state.dtLastReview.getFullYear());
+        // let year1 =(this.state.dtLastReview.getFullYear());
 
-        let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
-        console.log(FinalLastReviewDate1);
+        // let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+        //console.log(FinalLastReviewDate1);
        console.log(AllServiceFinalSavedIDValue);
        console.log(AllServiceGroupsFinalSavedIDValue);
 
@@ -1490,9 +1563,10 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
           AllCountryFinalSavedIDValue,
           AllCountryFinalSavedValue,
           this.state.Clientname,
-          (this.state.ContactId == null ? 0:this.state.ContactId.Id),
+          (this.state.SystemownerEmailArray),
+          //(this.state.ContactId == null ? 0:this.state.ContactId.Id),
           this.state.WiproSynergy,
-          FinalLastReviewDate1,
+          //FinalLastReviewDate1,
           this.state.desc,
           this.state.keywords,
           this.state.MyContentTypeValue,
@@ -1501,7 +1575,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
           {
       
             console.log(data);
-             alert('Record submitted successfully');
+             alert("Thank you for submitting your content to MarketHub! Your submission has been received and will be reviewed within 48 hours. You’ll receive an email confirmation once the content is published");
 
             window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
           
@@ -1518,11 +1592,11 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
      
    private onApproveClick():void{
 
-    let month1= (this.state.dtLastReview.getMonth()+1);
+    // let month1= (this.state.dtLastReview.getMonth()+1);
 
-    let year1 =(this.state.dtLastReview.getFullYear());
+    // let year1 =(this.state.dtLastReview.getFullYear());
 
-    let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+    // let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
     
 
     console.log()
@@ -1542,8 +1616,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         AllServiceGroupsFinalSavedIDValue,
         AllServiceFinalSavedValue,
         AllServiceFinalSavedIDValue,
-        FinalLastReviewDate1,
-        (this.state.ContactId == null ? 0:this.state.ContactId.Id),
+        //FinalLastReviewDate1,
+        (this.state.SystemownerEmailArray),
         this.state.WiproSynergyKey,
         this.state.desc,
         this.state.keywords,
@@ -1552,7 +1626,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
       ).then(function (data:any)
         {
       
-          alert('Record updated successfully');
+          alert('Record Approved successfully');
           window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
       
          
@@ -1566,11 +1640,20 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
    
    private onRejectClick():void{
 
-    let month1= (this.state.dtLastReview.getMonth()+1);
+    // let month1= (this.state.dtLastReview.getMonth()+1);
 
-    let year1 =(this.state.dtLastReview.getFullYear());
+    // let year1 =(this.state.dtLastReview.getFullYear());
 
-    let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+    // let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+
+    if(this.state.comments=="")
+    {
+
+    alert('Please enter Rejection comments')
+    }
+
+    else
+    {
 
     this.setState({ isSaving: true });
    
@@ -1579,33 +1662,34 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
         myitemId,
         this.state.Name,
         ContentType,
-        // AllDomainsFinalSavedValue,
-        // AllDomainsFinalSavedIDValue,
-        updatedDomainTextsString,
-        this.state.UpdateDomainIdString,
+        AllDomainsFinalSavedValue,
+        AllDomainsFinalSavedIDValue,
         AllSubDomainsFinalTextValues,
         AllSubDomainsFinalIDValue,
         AllServiceGroupsFinalSavedValue,
         AllServiceGroupsFinalSavedIDValue,
         AllServiceFinalSavedValue,
         AllServiceFinalSavedIDValue,
-        FinalLastReviewDate1,
-        (this.state.ContactId == null ? 0:this.state.ContactId.Id),
+        //FinalLastReviewDate1,
+       (this.state.SystemownerEmailArray),
         this.state.WiproSynergy,
         this.state.desc,
         this.state.keywords,
+        this.state.comments,
         this.state.contentypeKey
       
       ).then(function (data:any)
         {
       
-          alert('Record updated successfully');
+          alert('Record Rejected successfully');
+          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+
       
          
       
         });
       
-        
+      }
 
    }
 
@@ -1642,10 +1726,11 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 <br></br>
 
       {/* <b><label className={styles.HeadLable}>Marketing Hub</label></b><br/>   */}
-      <b><label className={styles.labelsFonts}>Title of Document1 <label className={styles.recolorss}>*</label></label></b><br/>  
+      <b><label className={styles.labelsFonts}>Title of Document <label className={styles.recolorss}>*</label></label></b><br/>  
       <input type="text" name="txtyourName" value={this.state.Name} onChange={this.changeYourname.bind(this)} className={styles.links}/><br></br>
-
-      <b><label className={styles.labelsFonts}>Content Types <label className={styles.recolorss} >*</label></label></b><br></br> 
+     <label className={styles.labelsFonts1}>[Enter a clear, descriptive title that reflects the content and purpose of the document. Avoid using version numbers or underscores]</label><br></br>
+    <b><label className={styles.labelsFonts}>ContentTypes <label className={styles.recolorss} >*</label></label></b><br></br> 
+     <label className={styles.labelsFonts1}>[Refer to the Quick Reference Guide to choose the correct content type for your submission]</label><br></br>
     <Dropdown className={styles.onlyFont}
   placeholder="Select  ContentTypes"
   options={this.state.ContentTypeItems}
@@ -1654,6 +1739,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
   <br></br>
 
   <b><label className={styles.labelsFonts}>Domains <label className={styles.recolorss} >*</label></label></b><br></br> 
+  <label className={styles.labelsFonts1}>[Select all options that apply]</label><br></br>
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Domains"
          options={this.state.DomainItems}
@@ -1667,7 +1753,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
             </ComboBox>
  <br></br>
 
- <b><label className={styles.labelsFonts}>Sub Domains <label className={styles.recolorss} >*</label></label></b><br></br> 
+ <b><label className={styles.labelsFonts}>Sub-Domains</label></b><br></br> 
+ <label className={styles.labelsFonts1}>[Select all options that apply]</label><br></br>
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  SubDomains"
          options={this.state.SubDomainItems}
@@ -1681,6 +1768,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 <br></br>
     
   <b><label className={styles.labelsFonts}>Service Groups <label className={styles.recolorss} >*</label></label></b><br></br> 
+  <label className={styles.labelsFonts1}>[Select all options that apply]</label><br></br>
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Serivce Groups"
          options={this.state.ServiceGroupItems}
@@ -1692,7 +1780,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
             </ComboBox>
  <br></br>
 
- <b><label className={styles.labelsFonts}>Services  <label className={styles.recolorss} >*</label></label></b><br></br> 
+ <b><label className={styles.labelsFonts}>Services </label></b><br></br> 
+ <label className={styles.labelsFonts1}>[Select all options that apply]</label><br></br>
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Services"
          options={this.state.ServicesItems}
@@ -1707,6 +1796,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 
 
     <b><label className={styles.labelsFonts}>Regions <label className={styles.recolorss} >*</label></label></b><br></br> 
+    <label className={styles.labelsFonts1}>[Select all options that apply]</label><br></br>
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Regions"
          options={this.state.RegionItems}
@@ -1717,7 +1807,8 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
             </ComboBox>
  <br></br>
 
- <b><label className={styles.labelsFonts}>Countries <label className={styles.recolorss} >*</label></label></b><br></br> 
+ <b><label className={styles.labelsFonts}>Country / Area <label className={styles.recolorss} >*</label></label></b><br></br> 
+ <label className={styles.labelsFonts1}>[Select all options that apply]</label><br></br>
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Countries"
          options={this.state.CountryItems}
@@ -1729,18 +1820,20 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
     <br></br>
 
 <b><label className={styles.labelsFonts}>Client <label className={styles.recolorss}>*</label></label></b><br/>  
+<label className={styles.labelsFonts1}>[Enter the client name. For generic documents, use General. For credentials covering multiple clients, use Multiple-Clients. For white-labelled proposals, use White-Labelled]</label><br></br>
 <input type="text" name="txtClient" value={this.state.Clientname} onChange={this.changeClientName.bind(this)} className={styles.links}/><br></br>
 
 <b><label className={styles.labelsFonts}>Contact <label className={styles.recolorss}>*</label></label></b><br/>  
+<label className={styles.labelsFonts1}>[Add all applicable contacts. These should be people responsible for addressing queries about this content]</label><br></br>
 <div className={styles.Pepsize}>  
               <PeoplePicker 
                   context={this.props.context}
                   //titleText="User Name"
-                  personSelectionLimit={1}
+                  personSelectionLimit={10}
                   showtooltip={true}
                   required={true}
                   disabled={false}
-                  onChange={this._getPeoplePickerItems.bind(this)}
+                  onChange={this._getPeoplePickerItemsSystTechicalOwner1.bind(this)}
                  
                   showHiddenInUI={false}
                   principalTypes={[PrincipalType.User]}
@@ -1754,9 +1847,9 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 <b><label className={styles.labelsFonts}>Wipro Synergy </label><label className={styles.recolorss}>*</label></b><br/>  
 <b><ChoiceGroup className={styles.labelsFonts}  id="rdbWiproSynergy"  name="Wipro Synergy" options={WiproSynergyOptions}   onChange={this.ChangeWiproSynergy.bind(this)}  selectedKey={this.state.WiproSynergyKey}/></b><br></br>
 
-<div className={styles.Divsection}> 
-<b><label className={styles.labelsFonts}>Date of Last Review <label className={styles.recolorss}>*</label></label></b><br/><br/> 
-<div className={styles.DateClass}>
+{/* <div className={styles.Divsection}> 
+<b><label className={styles.labelsFonts}>Date of Last Review <label className={styles.recolorss}>*</label></label></b><br/><br/>  */}
+{/* <div className={styles.DateClass}>
 <DatePicker id="dtLastReviewid" placeholder="Select a date..."
                             onSelectDate={this._onSelectDate}
                             value={this.state.dtLastReview}
@@ -1764,12 +1857,13 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
                             isMonthPickerVisible={false}
                             className={styles.links}
                             />
-           </div></div>
-        <br></br>
+           </div></div> */}
+        
 
 <div className={styles.Divsection}> 
 
 <b><label className={styles.labelsFonts}>Description </label></b><br/><br/> 
+<label className={styles.labelsFonts1}>[Provide a brief summary of the content, highlighting its purpose and key details to help users understand its relevance.]</label><br></br><br></br>
 <div className={styles.welcome}>
 <TextField
       multiline
@@ -1781,6 +1875,7 @@ this.setState({CountryFinalStringValue:updatedSelectedTextArrayCountryString});
 <br></br>
 <div className={styles.Divsection}> 
 <b><label className={styles.labelsFonts}>Keywords </label></b><br/><br/>
+<label className={styles.labelsFonts1}>[Add relevant keywords to help others find this content easily. Use terms that best describe the topic or focus of the document..]</label><br></br><br></br>
 <div className={styles.welcome}>
 <TextField
       multiline
@@ -1820,7 +1915,7 @@ disabled={this.state.isSaving}
 
 <b><label className={styles.labelsFonts}> Title of Document <label className={styles.recolorss}>*</label></label></b><br></br>
 <input type="text" name="txtName" value={this.state.Name} onChange={this.changeYourname.bind(this)} className={styles.boxsize}/><br></br>
-<b><label className={styles.labelsFonts}>Content Types <label className={styles.recolorss} >*</label></label></b><br></br> 
+<b><label className={styles.labelsFonts}>ContentTypes <label className={styles.recolorss} >*</label></label></b><br></br> 
   <Dropdown className={styles.onlyFont}
   placeholder="Select  ContentTypes"
   options={this.state.ContentTypeItems}
@@ -1828,7 +1923,7 @@ disabled={this.state.isSaving}
   selectedKey={this.state.MyContentTypeValue ? this.state.MyContentTypeValue : undefined} onChange={this.hadleContentType.bind(this)}/>
   <br></br>
 
-<b><label className={styles.labelsFonts}>Domains12 <label className={styles.recolorss} >*</label></label></b><br></br> 
+<b><label className={styles.labelsFonts}>Domains <label className={styles.recolorss} >*</label></label></b><br></br> 
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Domains"
          options={this.state.DomainItems}
@@ -1841,7 +1936,7 @@ disabled={this.state.isSaving}
  <br></br>
 
   
-  <b><label className={styles.labelsFonts}>Sub Domains 12 <label className={styles.recolorss} >*</label></label></b><br></br> 
+  <b><label className={styles.labelsFonts}>Sub-Domains </label></b><br></br> 
    <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Sub Domains"
          options={this.state.SubDomainItems}
@@ -1853,7 +1948,7 @@ disabled={this.state.isSaving}
             </ComboBox>
  <br></br>
    
-   <b><label className={styles.labelsFonts}>Service Groups 12 <label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>Service Groups  <label className={styles.recolorss} >*</label></label></b><br></br> 
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Service Groups"
          options={this.state.ServiceGroupItems}
@@ -1865,7 +1960,7 @@ disabled={this.state.isSaving}
             </ComboBox>
             <br></br>
 
-   <b><label className={styles.labelsFonts}>Services 12 <label className={styles.recolorss} >*</label></label></b><br></br> 
+   <b><label className={styles.labelsFonts}>Services</label></b><br></br> 
     <ComboBox  styles={comboBoxStyles}
          placeholder="Select  Services"
          options={this.state.ServicesItems}
@@ -1878,7 +1973,7 @@ disabled={this.state.isSaving}
             <br></br>
 
    <b><label className={styles.labelsFonts}>Region<label className={styles.recolorss} >*</label></label></b><br></br> 
-   <b><label className={styles.labelsFonts}>{this.state.MyRegionName}</label></b><br></br> 
+   <b><label className={styles.labelsFonts}>{FinalRegions}</label></b><br></br> 
 
    <b><label className={styles.labelsFonts}>Country <label className={styles.recolorss} >*</label></label></b><br></br> 
    <b><label className={styles.labelsFonts}>{this.state.CountryName}</label></b><br></br> 
@@ -1891,26 +1986,27 @@ disabled={this.state.isSaving}
               <PeoplePicker 
                   context={this.props.context}
                   //titleText="User Name"
-                  personSelectionLimit={1}
+                  personSelectionLimit={10}
                   showtooltip={true}
                   required={true}
                   disabled={false}
-                  onChange={this._getPeoplePickerItems.bind(this)}
+                  onChange={this._getPeoplePickerItemsSystTechicalOwner1.bind(this)}
                    showHiddenInUI={false}
                   principalTypes={[PrincipalType.User]}
                   webAbsoluteUrl='https://capcoinc.sharepoint.com/sites/MarketHubSandbox/'
-                  defaultSelectedUsers={(this.state.ContactId && this.state.ContactId.length) ? [this.state.ContactId] : []}
+                  //defaultSelectedUsers={(this.state.ContactId && this.state.ContactId.length) ? [this.state.ContactId] : []}
+                  defaultSelectedUsers={this.state.ContactId || []}
                   ref={c => (this.ppl = c)} 
                   resolveDelay={1000} />  
 </div>
-<br></br><br></br>
+<br></br><br></br><br></br><br></br>
 
 <b><label className={styles.labelsFonts}>Wipro Synergy </label><label className={styles.recolorss}>*</label></b><br/>  
-<b><ChoiceGroup className={styles.labelsFonts}  id="rdbWiproSynergy"  name="Wipro Synergy" options={WiproSynergyOptions}   onChange={this.ChangeWiproSynergy.bind(this)}  selectedKey={this.state.WiproSynergyKey}/></b><br></br>
+<b><ChoiceGroup className={styles.labelsFonts}  id="rdbWiproSynergy"  name="Wipro Synergy" options={WiproSynergyOptions}   onChange={this.ChangeWiproSynergy.bind(this)}  selectedKey={this.state.WiproSynergyKey}/></b>
 
-<div className={styles.Divsection}> 
-<b><label className={styles.labelsFonts}>Date of Last Review <label className={styles.recolorss}>*</label></label></b><br/><br/> 
-<div className={styles.DateClass}>
+{/* <div className={styles.Divsection}> 
+<b><label className={styles.labelsFonts}>Date of Last Review <label className={styles.recolorss}>*</label></label></b><br/><br/>  */}
+{/* <div className={styles.DateClass}>
 <DatePicker id="dtLastReviewid" placeholder="Select a date..."
                             onSelectDate={this._onSelectDate}
                             value={this.state.dtLastReview}
@@ -1918,7 +2014,7 @@ disabled={this.state.isSaving}
                             isMonthPickerVisible={false}
                             className={styles.links}
                             />
-           </div></div>
+           </div></div> */}
         <br></br>
 
 <div className={styles.Divsection}> 
@@ -1943,6 +2039,19 @@ disabled={this.state.isSaving}
     />
     </div></div>
 <br></br>
+
+
+<div className={styles.Divsection}> 
+
+<b><label className={styles.labelsFonts}> Rejection Comments </label><label className={styles.recolorss}>*</label></b><br/><br/> 
+<div className={styles.welcome}>
+<TextField
+      multiline
+      rows={3}
+       value={this.state.comments}
+      onChange={this.changecoments.bind(this)}
+    />
+    </div></div>
 
 <Stack horizontal tokens={stackTokens1}>
 

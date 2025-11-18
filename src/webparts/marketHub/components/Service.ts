@@ -104,13 +104,27 @@ export default class Service {
         }
     }
 
+
+    public async getUserByEmail(email: string): Promise<any | null> {
+    if (!email || email.trim() === "") return null;
+
+    try {
+        // Ensures the user exists in the site collection and returns user info
+        const user = await sp.web.ensureUser(email);
+        return user.data; // Returns user object (Id, Title, Email, LoginName, etc.)
+    } catch (error) {
+        console.error(`Failed to get user by email "${email}":`, error);
+        return null;
+    }
+}
+
     public Test()
     {
 
         //console.log(this.Save("","","2","","","","","","","","","",2,"","","","","","","",2,""));
-    console.log(this.Save("","","","","","","","","","","","","","","","","","","","",2,""));
-     console.log(this.Approve(2,"","","","","","","","","","","","","","","",2));
-      console.log(this.Reject(2,"","","","","","","","","","","","","","","",2));
+    console.log(this.Save("","","","","","","","","","","","","","","",[],"","","",2,""));
+     console.log(this.Approve(2,"","","","","","","","","","",[],"","","",2));
+      console.log(this.Reject(2,"","","","","","","","","","",[],"","","","",2));
 
     }
 
@@ -159,9 +173,9 @@ export default class Service {
         MyCountries:String,
         
         MyClientname:string,
-        MyContactName:string,
+        MyContactName:[],
         MyWiproSynergy:string,
-        MyLastReviewDate:string,
+        //MyLastReviewDate:string,
         MyDescription:string,
         MyKeywords:string,
         MyContentTypeKey:Number,
@@ -175,6 +189,7 @@ export default class Service {
 
 
           let file=acceptedFiles;
+          let VarMyArra={"results":MyContactName};
     
           let Varmyval= await sp.web.lists.getByTitle("MarketHub").items.add({
     
@@ -193,11 +208,12 @@ export default class Service {
             CountryIDS:MyCountryID,
             Countries:MyCountries,
             Client:MyClientname,
-            ContactPersonId:MyContactName,
+            ContactPersonId:VarMyArra,
             WiproSynergy:MyWiproSynergy,
-            LastReview:MyLastReviewDate,
+            //LastReview:MyLastReviewDate,
              Description:MyDescription,
             Keywords:MyKeywords,
+
             ReqcontenttypeID:MyContentTypeKey,
             Title:"Record Saved"
     
@@ -285,11 +301,12 @@ private async Approve(
         MyServiceGroupIDs:string,
         MyServices:string,
         MyServiceIDS:string,
-        MyLastReviewDate:string,
-        MyContactName:string,
+        //MyLastReviewDate:string,
+        MyContactName:[],
         MyWiproSynergy:string,
         MyDescription:string,
         MyKeywords:string,
+        
         MyContentTypeKey:Number,
         
 )
@@ -301,6 +318,7 @@ private async Approve(
         {
     
         let list = sp.web.lists.getByTitle(MyListTitle);
+        let VarMyArra={"results":MyContactName};
         let Varmyval = await list.items.getById(MyRecordId).update({
 
         //Emp Update
@@ -319,13 +337,12 @@ private async Approve(
 
             Services:MyServices,
             ServicesIDS:MyServiceIDS,
-            LastReview:MyLastReviewDate,
-            ContactPersonId:MyContactName,
+            //LastReview:MyLastReviewDate,
+            ContactPersonId:VarMyArra,
 
             WiproSynergy:MyWiproSynergy,
             Description:MyDescription,
             Keywords:MyKeywords,
-
             ReqcontenttypeID:MyContentTypeKey,
             Title:"Record Approved",
             Status:"Approved"
@@ -360,11 +377,12 @@ private async Reject(
         MyServiceGroupIDs:string,
         MyServices:string,
         MyServiceIDS:string,
-        MyLastReviewDate:string,
-        MyContactName:string,
+        //MyLastReviewDate:string,
+        MyContactName:[],
         MyWiproSynergy:string,
         MyDescription:string,
         MyKeywords:string,
+        Mycomments:string,
         MyContentTypeKey:Number,
         
 )
@@ -376,6 +394,7 @@ private async Reject(
         {
     
         let list = sp.web.lists.getByTitle(MyListTitle);
+        let VarMyArra={"results":MyContactName};
         let Varmyval = await list.items.getById(MyRecordId).update({
 
         //Emp Update
@@ -394,13 +413,13 @@ private async Reject(
 
             Services:MyServices,
             ServicesIDS:MyServiceIDS,
-            LastReview:MyLastReviewDate,
-            ContactPersonId:MyContactName,
+            //LastReview:MyLastReviewDate,
+            ContactPersonId:VarMyArra,
 
             WiproSynergy:MyWiproSynergy,
             Description:MyDescription,
             Keywords:MyKeywords,
-
+            Comments:Mycomments,
             ReqcontenttypeID:MyContentTypeKey,
             Title:"Record Rejected",
             Status:"Rejected"
