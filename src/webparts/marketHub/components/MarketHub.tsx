@@ -438,7 +438,10 @@ this.setState({ContactId:Myvalues});
      else
      {
 
-      alert('Record is already Approved or Rejected')
+      alert('Record is already Approved or Rejected');
+      window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+      
+
      }
 
     }
@@ -1436,7 +1439,7 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
       if(this.state.Name=='')
       {
 
-        alert('Please enter your name')
+        alert('Please enter Title of Document')
       }
 
      else if(this.state.MyContentTypeValue=='')
