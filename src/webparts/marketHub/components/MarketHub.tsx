@@ -7,7 +7,7 @@ import { Dropdown,IDropdownStyles,IDropdownOption} from 'office-ui-fabric-react/
 import { ChoiceGroup,IChoiceGroupOption} from 'office-ui-fabric-react/lib/ChoiceGroup';
 const stackTokens = { childrenGap: 50 };
 import { ComboBox,IComboBoxOption,IComboBoxStyles } from 'office-ui-fabric-react/lib/ComboBox';
-import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
+import { PeoplePicker, PrincipalType} from "@pnp/spfx-controls-react/lib/PeoplePicker";
 import {PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 
 //import { DatePicker } from 'office-ui-fabric-react/lib/DatePicker';
@@ -1311,9 +1311,13 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
   for (let i = 0; i < items.length; i++) {
 
     let loginName = items[i].loginName;
+    console.log(loginName);
+
+    var test=items[i].secondaryText;
 
     // Get user by login name
-    const userInfo = await this._service.getUserByLogin(loginName);
+    //const userInfo = await this._service.getUserByLogin(loginName);
+    const userInfo = await this._service.getUserByEmail(test);
 
     // Save ID and email
     userIds.push(userInfo.Id);
@@ -1839,8 +1843,10 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
                   onChange={this._getPeoplePickerItemsSystTechicalOwner1.bind(this)}
                  
                   showHiddenInUI={false}
-                  principalTypes={[PrincipalType.User]}
-                  webAbsoluteUrl='https://capcoinc.sharepoint.com/sites/MarketHubSandbox/'
+                 // principalTypes={[PrincipalType.User]}
+                  principalTypes={[PrincipalType.User, PrincipalType.SecurityGroup]}
+                  
+                  webAbsoluteUrl='https://capcoinc.sharepoint.com/'
                   defaultSelectedUsers={(this.state.ContactId && this.state.ContactId.length) ? [this.state.ContactId] : []}
                   ref={c => (this.ppl = c)} 
                   resolveDelay={1000} />  
