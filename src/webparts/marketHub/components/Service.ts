@@ -191,7 +191,7 @@ export default class Service {
           let file=acceptedFiles;
           let VarMyArra={"results":MyContactName};
     
-          let Varmyval= await sp.web.lists.getByTitle("MarketHub").items.add({
+          let Varmyval= await sp.web.lists.getByTitle("MarketHubStagingList").items.add({
     
             Name:YourName,
             ContentTypes:MyContentType,
@@ -312,7 +312,7 @@ private async Approve(
 )
     {
 
-       let MyListTitle='MarketHub';
+       let MyListTitle='MarketHubStagingList';
 
         try
         {
@@ -388,7 +388,7 @@ private async Reject(
 )
     {
 
-       let MyListTitle='MarketHub';
+       let MyListTitle='MarketHubStagingList';
 
         try
         {
