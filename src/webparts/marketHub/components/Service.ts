@@ -191,7 +191,7 @@ export default class Service {
           let file=acceptedFiles;
           let VarMyArra={"results":MyContactName};
     
-          let Varmyval= await sp.web.lists.getByTitle("MarketHub").items.add({
+          let Varmyval= await sp.web.lists.getByTitle("MarketHub Submission Review").items.add({
     
             Name:YourName,
             ContentTypes:MyContentType,
@@ -253,7 +253,7 @@ export default class Service {
     public async getItemByID(ItemID: any): Promise<any> {
     try {
 
-const selectedList = 'MarketHub';
+const selectedList = 'MarketHub Submission Review';
 const Item: any[] = await sp.web.lists.getByTitle(selectedList).items.select("*,Title,ContactPerson/EMail,Attachments,AttachmentFiles").expand("ContactPerson/EMail,AttachmentFiles").filter("ID eq '" + ItemID + "'").get();
         return Item[0];
     } catch (error) {
@@ -312,7 +312,7 @@ private async Approve(
 )
     {
 
-       let MyListTitle='MarketHub';
+       let MyListTitle='MarketHub Submission Review';
 
         try
         {
@@ -388,7 +388,7 @@ private async Reject(
 )
     {
 
-       let MyListTitle='MarketHub';
+       let MyListTitle='MarketHub Submission Review';
 
         try
         {

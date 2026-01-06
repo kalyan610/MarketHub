@@ -439,7 +439,7 @@ this.setState({ContactId:Myvalues});
      {
 
       alert('Record is already Approved or Rejected');
-      window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+      window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHub/");
       
 
      }
@@ -1440,6 +1440,8 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
 
       //alert('two');
 
+     
+
       if(this.state.Name=='')
       {
 
@@ -1480,10 +1482,23 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
 
       // }
 
+
+  else if (!this.state.SystemownerEmailArray || this.state.SystemownerEmailArray.length === 0) {
+
+    alert("Please select Contact");
+    
+  }
+
        else if(AllRegionsSelected.length==0)
       {
        
         alert('Please select Region Items')
+
+      }
+
+      else if(this.state.SystemownerEmailArray.length==0)
+      {
+
 
       }
 
@@ -1584,7 +1599,7 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
             console.log(data);
              alert("Thank you for submitting your content to MarketHub! Your submission has been received and will be reviewed within 48 hours. You’ll receive an email confirmation once the content is published");
 
-            window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+            window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHub/");
           
           
           });
@@ -1604,6 +1619,21 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
     // let year1 =(this.state.dtLastReview.getFullYear());
 
     // let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
+
+    if(this.state.Clientname=='' || this.state.Clientname==null)
+    {
+
+    alert("Please enter client name");
+      
+    }
+
+    else if(!this.state.SystemownerEmailArray || this.state.SystemownerEmailArray.length === 0) 
+    {
+    alert("Please select Contact");
+    }
+
+    else
+    {
     
 
     console.log()
@@ -1634,13 +1664,13 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
         {
       
           alert('Record Approved successfully');
-          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHub/");
       
          
       
         });
       
-        
+      }
 
    }
 
@@ -1653,7 +1683,20 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
 
     // let FinalLastReviewDate1=month1+'/'+this.state.dtLastReview.getDate() +'/' +year1;
 
-    if(this.state.comments=="")
+    if(this.state.Clientname=='' || this.state.Clientname==null)
+    {
+
+    alert("Please enter client name");
+      
+    }
+
+    else if(!this.state.SystemownerEmailArray || this.state.SystemownerEmailArray.length === 0) 
+    {
+    alert("Please select Contact");
+    }
+
+
+    else if(this.state.comments=="")
     {
 
     alert('Please enter Rejection comments')
@@ -1689,7 +1732,7 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
         {
       
           alert('Record Rejected successfully');
-          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHubSandbox/");
+          window.location.replace("https://capcoinc.sharepoint.com/sites/MarketHub/");
 
       
          
@@ -1734,9 +1777,9 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
 
       {/* <b><label className={styles.HeadLable}>Marketing Hub</label></b><br/>   */}
       <b><label className={styles.labelsFonts}>Title of Document <label className={styles.recolorss}>*</label></label></b><br/>  
-      <input type="text" name="txtyourName" value={this.state.Name} onChange={this.changeYourname.bind(this)} className={styles.links}/><br></br>
      <label className={styles.labelsFonts1}>[Enter a clear, descriptive title that reflects the content and purpose of the document. Avoid using version numbers or underscores]</label><br></br>
-    <b><label className={styles.labelsFonts}>ContentTypes <label className={styles.recolorss} >*</label></label></b><br></br> 
+     <input type="text" name="txtyourName" value={this.state.Name} onChange={this.changeYourname.bind(this)} className={styles.links}/><br></br>
+    <b><label className={styles.labelsFonts}>Content Types <label className={styles.recolorss} >*</label></label></b><br></br> 
      <label className={styles.labelsFonts1}>[Refer to the Quick Reference Guide to choose the correct content type for your submission]</label><br></br>
     <Dropdown className={styles.onlyFont}
   placeholder="Select  ContentTypes"
@@ -1884,7 +1927,7 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
 <br></br>
 <div className={styles.Divsection}> 
 <b><label className={styles.labelsFonts}>Keywords </label></b><br/><br/>
-<label className={styles.labelsFonts1}>[Add relevant keywords to help others find this content easily. Use terms that best describe the topic or focus of the document..]</label><br></br><br></br>
+<label className={styles.labelsFonts1}>[Add relevant keywords separated by commas. Use terms that best describe the topic or focus of the document.]</label><br></br><br></br>
 <div className={styles.welcome}>
 <TextField
       multiline
