@@ -1440,8 +1440,6 @@ private async _getPeoplePickerItemsSystTechicalOwner1(items: any[]) {
 
       //alert('two');
 
-     
-
       if(this.state.Name=='')
       {
 
